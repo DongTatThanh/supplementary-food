@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Search, ShoppingCart, User, Menu, ChevronDown, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -58,18 +59,18 @@ const Header = () => {
     <header className="bg-primary text-primary-foreground">
       {/* Top banner */}
       <div className="bg-brand-red-dark text-white text-sm py-2 px-4 text-center">
-        🚚 FREESHIP toàn quốc cho đơn hàng từ 1.500.000đ • ☎️ Hotline: 0902.555.000 • 📍 Gửi trả hàng miễn phí
+         FREESHIP toàn quốc cho đơn hàng từ 1.500.000đ •  Hotline:0972068334 • Gửi trả hàng miễn phí
       </div>
 
       {/* Main header */}
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between gap-4">
           {/* Logo */}
-          <div className="flex items-center">
-            <h1 className="text-2xl font-bold text-white">Gymstore</h1>
-            <span className="text-accent ml-1">VN</span>
+          <div className="flex items-center cursor-pointer" onClick={() => navigate('/')}>
+            <button className="bg-transparent border-0 text-white hover:text-accent transition-colors">
+             <img src="/assets/logoweb/1.png" alt="GymStore Logo" className="h-24 w-auto" />
+            </button>
           </div>
-
           {/* Search bar */}
           <div className="flex-1 max-w-2xl mx-8">
             <div className="relative">
@@ -252,7 +253,7 @@ const Header = () => {
 
                 <NavigationMenuItem>
                   <NavigationMenuLink className="bg-transparent text-white hover:bg-white/10 px-4 py-2 text-sm font-medium transition-colors">
-                    Dinh Dưỡng Thể Thao
+                   Thực phẩm bổ sung
                   </NavigationMenuLink>
                 </NavigationMenuItem>
 
@@ -278,7 +279,7 @@ const Header = () => {
             
             <div className="flex items-center gap-4 text-sm">
               <div className="text-white">
-                📞 Đặt hàng nhanh: <span className="font-bold">0902.555.000</span>
+                📞 Đặt hàng nhanh: <span className="font-bold">0972068334</span>
               </div>
             </div>
           </div>

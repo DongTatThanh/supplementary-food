@@ -29,7 +29,7 @@ const registerSchema = z.object({
 });
 
 const forgotPasswordSchema = z.object({
-  email: z.string().email("Email không hợp lệ"),
+  email: z.string().email("email không tồn tại trong database"),
 });
 
 const otpSchema = z.object({

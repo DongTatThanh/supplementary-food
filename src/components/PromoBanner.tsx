@@ -7,12 +7,12 @@ const PromoBanner = () => {
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center">
           <div className="mb-4">
-            <span className="text-accent text-lg font-bold">🔥 KHUYẾN MÃI KHỦNG</span>
+            <span className="text-accent text-lg font-bold"> KHUYẾN MÃI KHỦNG</span>
           </div>
           <h2 className="text-3xl md:text-4xl font-bold mb-2">
-            1 TỶ LỢI NHUẬN 🎯<br />
-            27G PROTEIN 💪<br />
-            17G EAAs 🏆
+            1 TỶ LỢI NHUẬN <br />
+            27G PROTEIN <br />
+            17G EAAs 
           </h2>
           <p className="text-xl mb-6">SẢN PHẨM ĐỘC QUYỀN<br />GIÁ CẠNH TRANH</p>
           <Button size="lg" variant="secondary" className="bg-white text-primary hover:bg-gray-100 px-8 py-3">

@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import ProductCard from "@/components/ProductCard";
+import ProductCard from "./ProductCard";
 
 const VitaminSection = () => {
   const vitamins = [

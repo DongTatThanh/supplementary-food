@@ -13,8 +13,20 @@ const KnowledgeSection = () => {
       title: "Nhìn nhận đúng về tác dụng của Tăng cường - Hậu quả của việc lạm dụng",
       date: "04/10/2024", 
       views: "1.8k views",
-      image: "https://images.unsplash.com/photo-1571019613540-58ca50ac7fb6?w=300&h=200&fit=crop&crop=center"
-    }
+        image: "https://unsplash.com/photos/red-door-with-glass-panes-on-brick-building-EuF9Q8htUYE"
+      },
+        {
+      title: "Kiến thức về sử dụng Whey Protein và Tác dụng phụ không mong muốn",
+      date: "04/10/2024",
+      views: "2.1k views",
+      image: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=300&h=200&fit=crop&crop=center"
+    },  {
+      title: "Kiến thức về sử dụng Whey Protein và Tác dụng phụ không mong muốn",
+      date: "04/10/2024",
+      views: "2.1k views",
+      image: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=300&h=200&fit=crop&crop=center"
+    },
+    
   ];
 
   const nutritionArticles = [
@@ -52,7 +64,8 @@ const KnowledgeSection = () => {
                       <div className="flex-1 p-4">
                         <h3 className="font-semibold text-sm mb-2 line-clamp-2">{article.title}</h3>
                         <div className="text-xs text-muted-foreground">
-                          <span>{article.date}</span> • <span>{article.views}</span>
+                          <span>{article.date}</span> 
+                           <span>{article.views}</span>
                         </div>
                       </div>
                     </div>
@@ -60,9 +73,7 @@ const KnowledgeSection = () => {
                 </Card>
               ))}
             </div>
-            <div className="text-center mt-6">
-              <Button variant="outline" size="sm">Xem tất cả →</Button>
-            </div>
+           
           </div>
 
           {/* Nutrition Knowledge */}
@@ -76,6 +87,7 @@ const KnowledgeSection = () => {
                       <img 
                         src={article.image} 
                         alt={article.title}
+
                         className="w-24 h-20 object-cover"
                       />
                       <div className="flex-1 p-4">
@@ -89,9 +101,7 @@ const KnowledgeSection = () => {
                 </Card>
               ))}
             </div>
-            <div className="text-center mt-6">
-              <Button variant="outline" size="sm">Xem tất cả →</Button>
-            </div>
+           
           </div>
         </div>
       </div>

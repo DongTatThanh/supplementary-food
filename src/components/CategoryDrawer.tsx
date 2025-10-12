@@ -12,67 +12,62 @@ import { Badge } from "@/components/ui/badge";
 
 const categoryItems = [
   {
-    title: "WHEYSTORE - UY TÍN 10 NĂM",
+    title: "WHEY PROTEIN",
     icon: Star,
     subtitle: "",
     hasArrow: false,
     isHeader: true
   },
   {
-    title: "MỤC TIÊU CỦA BẠN",
+    title: "SỮA TĂNG CÂN ",
     icon: Flame,
     subtitle: "",
     hasArrow: true,
     badge: "HOT"
   },
   {
-    title: "Thương Hiệu Nổi Bật",
+    title: "TĂNG SỨC MẠNH ",
     icon: Star,
     subtitle: "",
     hasArrow: true
   },
   {
-    title: "Whey Protein",
+    title: "HỖ TRỢ GIẢM CÂN ",
     icon: Dumbbell,
     subtitle: "Vegan Protein",
     hasArrow: false
   },
   {
-    title: "Sữa Mass Tăng Cân",
+    title: "VITAMIN - KHOÁNG CHẤT",
     icon: Coffee,
     subtitle: "",
     hasArrow: false
   },
   {
-    title: "BCAAs, EAAs Phục Hồi Cơ",
+    title: "PHỤ KIÊN TẬP GYM ",
     icon: Shield,
     subtitle: "",
     hasArrow: false
   },
   {
-    title: "Pre-Workout, Creatine",
+    title: "QUẦN ÁO GYM ",
     icon: Flame,
     subtitle: "",
     hasArrow: false
   },
   {
-    title: "Sức Khỏe & Sinh Lý",
+    title: "EAA - ESSENTIAL AMINO",
     icon: Heart,
     subtitle: "",
     hasArrow: true
   },
   {
-    title: "Hỗ Trợ Giảm Mỡ",
+    title: "TĂNG TESTOSTERONE",
     icon: Leaf,
     subtitle: "Yến Mạch",
     hasArrow: false
   },
-  {
-    title: "Bình Shaker",
-    icon: FlaskConical,
-    subtitle: "Phụ Kiện Tập",
-    hasArrow: false
-  }
+ 
 ];
 
 const CategoryDrawer = () => {
@@ -88,7 +83,7 @@ const CategoryDrawer = () => {
       </SheetTrigger>
       <SheetContent side="left" className="w-80 p-0 bg-background">
         <SheetHeader className="p-4 bg-primary text-primary-foreground">
-          <SheetTitle className="text-left text-white">DANH MỤC</SheetTitle>
+          <SheetTitle className="text-left text-white">Danh mục sản phẩm </SheetTitle>
         </SheetHeader>
         
         <div className="flex-1 overflow-auto">
