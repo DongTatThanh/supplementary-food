@@ -59,7 +59,7 @@ const Header = () => {
     <header className="bg-primary text-primary-foreground">
       {/* Top banner */}
       <div className="bg-brand-red-dark text-white text-sm py-2 px-4 text-center">
-         FREESHIP toàn quốc cho đơn hàng từ 1.500.000đ •  Hotline:0972068334 • Gửi trả hàng miễn phí
+          HỆ THỐNG BÁN LẺ UY TÍN NHẤT TẠI VIỆT NAM 
       </div>
 
       {/* Main header */}
@@ -76,7 +76,7 @@ const Header = () => {
             <div className="relative">
               <Input
                 type="text"
-                placeholder="Tìm kiếm sản phẩm..."
+                placeholder="Bạn cần gì ngày hôm nay..."
                 className="w-full pl-4 pr-12 py-2 border-0 bg-white text-foreground"
               />
               <Button size="sm" className="absolute right-1 top-1 bg-primary hover:bg-primary/90">
@@ -144,15 +144,15 @@ const Header = () => {
 
         {/* Navigation */}
         <nav className="mt-4 pt-4 border-t border-white/20">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-wrap gap-4">
             <NavigationMenu className="mx-0">
-              <NavigationMenuList className="flex items-center gap-2">
+              <NavigationMenuList className="flex items-center gap-1 flex-wrap">
                 <NavigationMenuItem>
                   <CategoryDrawer />
                 </NavigationMenuItem>
 
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="bg-transparent text-white hover:bg-white/10 data-[active]:bg-white/10 data-[state=open]:bg-white/10">
+                  <NavigationMenuTrigger className="bg-transparent text-white hover:bg-white/10 data-[active]:bg-white/10 data-[state=open]:bg-white/10 whitespace-nowrap">
                     Thực Phẩm Bổ Sung
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
@@ -192,7 +192,7 @@ const Header = () => {
                 </NavigationMenuItem>
 
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="bg-transparent text-white hover:bg-white/10 data-[active]:bg-white/10 data-[state=open]:bg-white/10">
+                  <NavigationMenuTrigger className="bg-transparent text-white hover:bg-white/10 data-[active]:bg-white/10 data-[state=open]:bg-white/10 whitespace-nowrap">
                     Máy Tập Thể Dục
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
@@ -220,7 +220,7 @@ const Header = () => {
                 </NavigationMenuItem>
 
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="bg-transparent text-white hover:bg-white/10 data-[active]:bg-white/10 data-[state=open]:bg-white/10">
+                  <NavigationMenuTrigger className="bg-transparent text-white hover:bg-white/10 data-[active]:bg-white/10 data-[state=open]:bg-white/10 whitespace-nowrap">
                     Phụ Kiện Gym
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
@@ -252,33 +252,33 @@ const Header = () => {
                 </NavigationMenuItem>
 
                 <NavigationMenuItem>
-                  <NavigationMenuLink className="bg-transparent text-white hover:bg-white/10 px-4 py-2 text-sm font-medium transition-colors">
+                  <NavigationMenuLink className="bg-transparent text-white hover:bg-white/10 px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap cursor-pointer">
                    Thực phẩm bổ sung
                   </NavigationMenuLink>
                 </NavigationMenuItem>
 
                 <NavigationMenuItem>
-                  <NavigationMenuLink className="bg-transparent text-white hover:bg-white/10 px-4 py-2 text-sm font-medium transition-colors">
+                  <NavigationMenuLink className="bg-transparent text-white hover:bg-white/10 px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap cursor-pointer">
                     Giải Thưởng
                   </NavigationMenuLink>
                 </NavigationMenuItem>
 
                 <NavigationMenuItem>
-                  <NavigationMenuLink className="bg-transparent text-white hover:bg-white/10 px-4 py-2 text-sm font-medium transition-colors">
+                  <NavigationMenuLink className="bg-transparent text-white hover:bg-white/10 px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap cursor-pointer">
                     Thương Hiệu
                   </NavigationMenuLink>
                 </NavigationMenuItem>
 
                 <NavigationMenuItem>
-                  <NavigationMenuLink className="bg-transparent text-white hover:bg-white/10 px-4 py-2 text-sm font-medium transition-colors">
+                  <NavigationMenuLink className="bg-transparent text-white hover:bg-white/10 px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap cursor-pointer">
                     Kiến Thức
                   </NavigationMenuLink>
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
             
-            <div className="flex items-center gap-4 text-sm">
-              <div className="text-white">
+            <div className="flex items-center gap-4 text-sm flex-shrink-0">
+              <div className="text-white whitespace-nowrap">
                 📞 Đặt hàng nhanh: <span className="font-bold">0972068334</span>
               </div>
             </div>

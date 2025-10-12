@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Menu, ChevronRight, Star, Flame, Heart, Dumbbell, Coffee, Shield, Leaf, FlaskConical } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 import {
   Sheet,
   SheetContent,
@@ -16,7 +17,8 @@ const categoryItems = [
     icon: Star,
     subtitle: "",
     hasArrow: false,
-    isHeader: true
+    isHeader: true,
+    link: "/products/whey-protein"
   },
   {
     title: "SỮA TĂNG CÂN ",
