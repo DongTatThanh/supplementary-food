@@ -1,3 +1,4 @@
+
 // API Configuration với fallback values
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 
                      import.meta.env.VITE_API_URL || 
@@ -131,3 +132,25 @@ export interface LoginData {
   email: string;
   password: string;
 }
+export interface DiscountCode{
+  id: number;
+  code: string;
+  discount_percentage?: number;
+  discount_amount?: number;
+  min_order_value?: number;
+  max_discount_amount?: number;
+  start_date: string;
+  end_date: string;
+  usage_limit?: number;
+  used_count?: number;
+  is_active: boolean;
+  description?: string;
+  created_at?: string;
+}
+export interface DiscountCodeResponse {
+  success: boolean;
+  data: DiscountCode[];  // Đổi từ DiscountCode thành DiscountCode[]
+  message?: string;
+}
+
+

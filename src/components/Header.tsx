@@ -144,138 +144,92 @@ const Header = () => {
 
         {/* Navigation */}
         <nav className="mt-4 pt-4 border-t border-white/20">
-          <div className="flex items-center justify-between flex-wrap gap-4">
-            <NavigationMenu className="mx-0">
+        <div className="flex items-center justify-start flex-wrap gap-4 relative ml-32">
+
+            <div className="flex items-center justify-start flex-wrap gap-4 relative">
+            <NavigationMenu className="ml-0">
               <NavigationMenuList className="flex items-center gap-1 flex-wrap">
                 <NavigationMenuItem>
                   <CategoryDrawer />
                 </NavigationMenuItem>
+                
 
-                <NavigationMenuItem>
+                 <NavigationMenuItem>
                   <NavigationMenuTrigger className="bg-transparent text-white hover:bg-white/10 data-[active]:bg-white/10 data-[state=open]:bg-white/10 whitespace-nowrap">
-                    Thực Phẩm Bổ Sung
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <div className="grid w-[600px] grid-cols-2 gap-3 p-4">
-                      <div className="space-y-2">
-                        <h4 className="font-medium">Protein</h4>
-                        <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
-                          <div className="text-sm font-medium leading-none">Whey Protein</div>
-                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                            Protein tăng cơ nhanh chóng
-                          </p>
-                        </NavigationMenuLink>
-                        <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
-                          <div className="text-sm font-medium leading-none">Casein Protein</div>
-                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                            Protein tiêu hóa chậm
-                          </p>
-                        </NavigationMenuLink>
-                      </div>
-                      <div className="space-y-2">
-                        <h4 className="font-medium">Vitamin & Khoáng Chất</h4>
-                        <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
-                          <div className="text-sm font-medium leading-none">Multivitamin</div>
-                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                            Bổ sung vitamin tổng hợp
-                          </p>
-                        </NavigationMenuLink>
-                        <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
-                          <div className="text-sm font-medium leading-none">Omega 3</div>
-                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                            Axit béo thiết yếu
-                          </p>
-                        </NavigationMenuLink>
-                      </div>
-                    </div>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger className="bg-transparent text-white hover:bg-white/10 data-[active]:bg-white/10 data-[state=open]:bg-white/10 whitespace-nowrap">
-                    Máy Tập Thể Dục
+                 Công Cụ
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <div className="grid w-[400px] grid-cols-1 gap-3 p-4">
                       <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
-                        <div className="text-sm font-medium leading-none">Máy Chạy Bộ</div>
-                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                          Cardio tại nhà hiệu quả
-                        </p>
+                        <div className="text-sm font-medium leading-none">Công Cụ Tính TDEE OnlinE</div>
+                        
+                       
                       </NavigationMenuLink>
                       <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
-                        <div className="text-sm font-medium leading-none">Ghế Tập Đa Năng</div>
-                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                          Tập toàn thân với một thiết bị
-                        </p>
-                      </NavigationMenuLink>
-                      <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
-                        <div className="text-sm font-medium leading-none">Xe Đạp Tập</div>
-                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                          Tăng cường sức bền
-                        </p>
+                        <div className="text-sm font-medium leading-none">Công Cụ Tính BMI Online</div>
                       </NavigationMenuLink>
                     </div>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
+              
 
                 <NavigationMenuItem>
                   <NavigationMenuTrigger className="bg-transparent text-white hover:bg-white/10 data-[active]:bg-white/10 data-[state=open]:bg-white/10 whitespace-nowrap">
-                    Phụ Kiện Gym
+         Kiến Thức
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
-                    <div className="grid w-[500px] grid-cols-2 gap-3 p-4">
-                      <div className="space-y-2">
-                        <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
-                          <div className="text-sm font-medium leading-none">Găng Tay Tập</div>
-                        </NavigationMenuLink>
-                        <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
-                          <div className="text-sm font-medium leading-none">Dây Tập Kháng Lực</div>
-                        </NavigationMenuLink>
-                        <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
-                          <div className="text-sm font-medium leading-none">Thảm Tập Yoga</div>
-                        </NavigationMenuLink>
+                    <div className="grid w-[400px] grid-cols-1 gap-3 p-4">
+                      <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
+                        <div className="text-sm font-medium leading-none">Kiến Thức Dinh Dưỡng</div>
+
+                      </NavigationMenuLink>
+                      <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
+                        <div className="text-sm font-medium leading-none">Kiến Thức Tập Luyện</div>
+
+                      
+                       
+                      </NavigationMenuLink>
+                      <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
+                        <div className="text-sm font-medium leading-none"> Kiến Thức Tập Luyện</div>
+
+                      </NavigationMenuLink>
+                      <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
+                        <div className="text-sm font-medium leading-none">Tư Vấn Dinh Dưỡng </div>
+
+                    
+                        
+                       
+                      </NavigationMenuLink>
                       </div>
-                      <div className="space-y-2">
-                        <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
-                          <div className="text-sm font-medium leading-none">Bình Nước Thể Thao</div>
-                        </NavigationMenuLink>
-                        <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
-                          <div className="text-sm font-medium leading-none">Đai Lưng Tập Gym</div>
-                        </NavigationMenuLink>
-                        <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
-                          <div className="text-sm font-medium leading-none">Áo Gym Nam/Nữ</div>
-                        </NavigationMenuLink>
-                      </div>
-                    </div>
+                    
                   </NavigationMenuContent>
                 </NavigationMenuItem>
 
-                <NavigationMenuItem>
-                  <NavigationMenuLink className="bg-transparent text-white hover:bg-white/10 px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap cursor-pointer">
-                   Thực phẩm bổ sung
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
+               
+
+                
+
+              
 
                 <NavigationMenuItem>
                   <NavigationMenuLink className="bg-transparent text-white hover:bg-white/10 px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap cursor-pointer">
-                    Giải Thưởng
+                   Hệ thống cửa hàng
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+                 <NavigationMenuItem>
+                  <NavigationMenuLink className="bg-transparent text-white hover:bg-white/10 px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap cursor-pointer">
+                   Tin Tức
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+                 <NavigationMenuItem>
+                  <NavigationMenuLink className="bg-transparent text-white hover:bg-white/10 px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap cursor-pointer">
+                   Liên Hệ
                   </NavigationMenuLink>
                 </NavigationMenuItem>
 
-                <NavigationMenuItem>
-                  <NavigationMenuLink className="bg-transparent text-white hover:bg-white/10 px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap cursor-pointer">
-                    Thương Hiệu
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-
-                <NavigationMenuItem>
-                  <NavigationMenuLink className="bg-transparent text-white hover:bg-white/10 px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap cursor-pointer">
-                    Kiến Thức
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
+            </div>
             
             <div className="flex items-center gap-4 text-sm flex-shrink-0">
               <div className="text-white whitespace-nowrap">
