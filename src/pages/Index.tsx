@@ -12,10 +12,8 @@ import DiscountCodeList from "@/components/DiscountCodeList";
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
-      <Header />
-      
+      <Header /> 
       <HeroSection />
-      
       {/* Deal banners */}
       <DiscountCodeList />
       

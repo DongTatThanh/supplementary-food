@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { DiscountCode } from '@/lib/api-client';
 import { DiscountCodeService } from '@/services/discountCode.service';
-import DiscountCodeCard from './DiscountCodeCard';
+import DiscountCodeCard from './ui/DiscountCodeCard';
 import { Sparkles } from 'lucide-react';
 
 const discountCodeService = new DiscountCodeService();
@@ -67,41 +67,20 @@ const DiscountCodeList = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-orange-50 py-12">
+    <div className="bg-gray-50 py-2">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 bg-red-100 text-red-700 px-4 py-2 rounded-full mb-4">
-          
-          </div>
-          <h1 className="text-4xl md:text-5xl font-black text-gray-800 mb-4">
-            Mã Giảm Giá <span className="text-red-600">Hot</span> Nhất
-          </h1>
-          <p className="text-gray-600 text-lg">
-            Tiết kiệm ngay với các mã giảm giá hấp dẫn! 🔥
-          </p>
-          <div className="mt-4">
-            <span className="inline-block bg-gradient-to-r from-red-600 to-orange-500 text-white px-6 py-2 rounded-full font-bold text-sm">
-              {discountCodes.length} mã đang có
-            </span>
-          </div>
+        <div className="mb-2">
+          <h2 className="text-sm font-bold text-gray-800">
+            Mã Giảm Giá
+          </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-          {discountCodes.map((discount) => (
-            <DiscountCodeCard key={discount.id} discount={discount} />
+        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+          {discountCodes.slice(0, 4).map((discount) => (
+            <div key={discount.id} className="flex-shrink-0 w-72">
+              <DiscountCodeCard discount={discount} />
+            </div>
           ))}
-        </div>
-
-        <div className="mt-16 text-center">
-          <div className="bg-gradient-to-r from-red-600 to-orange-500 text-white rounded-2xl p-8 max-w-2xl mx-auto shadow-2xl">
-            <h3 className="text-2xl font-bold mb-2">Áp dụng mã ngay!</h3>
-            <p className="text-red-100 mb-4">
-              Nhập mã giảm giá khi thanh toán để nhận ưu đãi
-            </p>
-            <button className="bg-white text-red-600 px-8 py-3 rounded-lg font-bold hover:bg-red-50 transition-colors">
-              Mua sắm ngay
-            </button>
-          </div>
         </div>
       </div>
     </div>
