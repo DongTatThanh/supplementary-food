@@ -152,5 +152,26 @@ export interface DiscountCodeResponse {
   data: DiscountCode[];  // Đổi từ DiscountCode thành DiscountCode[]
   message?: string;
 }
+export interface Product {
+  id: number;
+  name: string;
+  description?: string;
+  price: string | number;
+  sale_price?: string | number;
+  discount_percentage?: number;
+  image_url?: string;
+  stock_quantity?: number;
+  category_id?: number;
+  brand_id?: number;
+  is_on_sale?: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface ProductsResponse {
+  success: boolean;
+  data: Product[];
+  message?: string;
+}
 
 

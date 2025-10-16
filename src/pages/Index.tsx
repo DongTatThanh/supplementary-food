@@ -4,10 +4,13 @@ import PromoBanner from "@/components/PromoBanner";
 import BrandShowcase from "@/components/BrandShowcase";
 import CategorySection from "@/components/CategorySection";
 import KnowledgeSection from "@/components/KnowledgeSection";
-import VitaminSection from "@/components/VitaminSection";
+
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import DiscountCodeList from "@/components/DiscountCodeList";
+import ProductCard from "@/components/ui/ProductCard";
+import OnSaleProducts from "@/components/OnSaleProducts";
+
 
 const Index = () => {
   return (
@@ -16,11 +19,12 @@ const Index = () => {
       <HeroSection />
       {/* Deal banners */}
       <DiscountCodeList />
+
       
-      <PromoBanner />
+      <OnSaleProducts />
       <CategorySection />
       <BrandShowcase />
-      <VitaminSection />
+ 
       <KnowledgeSection />
       <Footer />
     </div>
