@@ -1,30 +1,38 @@
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
-import PromoBanner from "@/components/PromoBanner";
 import BrandShowcase from "@/components/BrandShowcase";
 import CategorySection from "@/components/CategorySection";
 import KnowledgeSection from "@/components/KnowledgeSection";
 
 import Footer from "@/components/Footer";
-import { Button } from "@/components/ui/button";
 import DiscountCodeList from "@/components/DiscountCodeList";
-import ProductCard from "@/components/ui/ProductCard";
 import OnSaleProducts from "@/components/OnSaleProducts";
 
+import AllCategoriesWithProducts from "@/components/AllCategoriesWithProducts";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header /> 
       <HeroSection />
-      {/* Deal banners */}
       <DiscountCodeList />
-
       
+      {/* Sản phẩm khuyến mại */}
       <OnSaleProducts />
+      
+      {/* Tất cả danh mục với sản phẩm từ API */}
+      <AllCategoriesWithProducts />
+      
+      {/* Sản phẩm theo category - Whey Protein (có thể comment nếu dùng AllCategoriesWithProducts) */}
+      {/* <CategoryProducts 
+        categoryId={1} 
+        categoryName="Whey Protein"
+        backgroundColor="bg-blue-900"
+      /> */}
+      
       <CategorySection />
       <BrandShowcase />
- 
+     
       <KnowledgeSection />
       <Footer />
     </div>

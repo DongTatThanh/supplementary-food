@@ -155,17 +155,32 @@ export interface DiscountCodeResponse {
 export interface Product {
   id: number;
   name: string;
+  slug?: string;
+  sku?: string;
   description?: string;
+  short_description?: string;
   price: string | number;
   sale_price?: string | number;
   discount_percentage?: number;
+  cost_price?: string | number;
   image_url?: string;
+  gallery_images?: string[];
   stock_quantity?: number;
+  weight?: string;
+  dimensions?: string;
   category_id?: number;
   brand_id?: number;
-  is_on_sale?: boolean;
+  is_featured?: number;
+  is_new_arrival?: number;
+  is_bestseller?: number;
+  is_on_sale?: number;
+  status?: string;
+  meta_title?: string;
+  meta_description?: string;
+  published_at?: string;
   created_at?: string;
   updated_at?: string;
+  brand?: Brand;
 }
 
 export interface ProductsResponse {
@@ -173,5 +188,14 @@ export interface ProductsResponse {
   data: Product[];
   message?: string;
 }
+
+export interface Brand {
+  id : number ;
+  name : string ;
+  description ?: string ;   
+  logo_url ?: string ;
+}
+
+export { ApiClient };
 
 
