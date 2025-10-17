@@ -202,11 +202,29 @@ export interface ProductsResponse {
 }
 
 export interface Brand {
-  id : number ;
-  name : string ;
-  description ?: string ;   
-  logo_url ?: string ;
+  id: number;
+  name: string;
+  slug: string;
+  logo_url: string | null;
+  banner_url: string | null;
+  description: string;
+  country: string;
+  website: string | null;
+  is_verified: number;
+  is_featured: number;
+  sort_order: number;
+  is_active: number;
+  created_at: string;
+  updated_at: string;
+
 }
+export interface BrandsResponse {
+  success: boolean;
+  data: Brand[];
+  message?: string;
+} 
+
+
 
 export { ApiClient };
 

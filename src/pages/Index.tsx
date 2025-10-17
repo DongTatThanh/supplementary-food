@@ -29,9 +29,9 @@ const Index = () => {
         categoryName="Whey Protein"
         backgroundColor="bg-blue-900"
       /> */}
-      
+           <BrandShowcase />
       <CategorySection />
-      <BrandShowcase />
+   
      
       <KnowledgeSection />
       <Footer />
