@@ -15,14 +15,7 @@ const AllCategoriesWithProducts = () => {
   const [error, setError] = useState<string | null>(null);
 
   // Màu nền cho các danh mục (xoay vòng các màu)
-  const backgroundColors = [
-    'bg-blue-900',
-    'bg-purple-900',
-    'bg-indigo-900',
-    'bg-slate-800',
-    'bg-cyan-900',
-    'bg-teal-900',
-  ];
+
 
   useEffect(() => {
     const fetchAllCategories = async () => {
@@ -92,7 +85,7 @@ const AllCategoriesWithProducts = () => {
       <div className="w-full py-12 bg-gradient-to-b from-gray-50 to-white">
         <div className="container mx-auto px-4">
           <div className="text-center p-8">
-            <p className="text-gray-600 text-lg">Không có danh mục nào có sản phẩm</p>
+            <p className="text-red-600 text-lg">Không có danh mục nào có sản phẩm</p>
           </div>
         </div>
       </div>
@@ -104,22 +97,23 @@ const AllCategoriesWithProducts = () => {
       {categories.map((category, index) => (
         <section
           key={category.id}
-          className={`${backgroundColors[index % backgroundColors.length]} py-8`}
+          className="py-8"
         >
           <div className="container mx-auto px-4">
-            {/* Header */}
-            <div className={`flex items-center justify-between mb-6 p-4 rounded-lg bg-opacity-50 bg-black`}>
-              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                <span className="text-3xl">📦</span>
+            {/* Header với thanh màu đỏ */}
+            <div className="flex items-center gap-3 mb-6">
+              <div className="bg-red-600 h-10 w-1 rounded-full"></div>
+              <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
+              
                 {category.name.toUpperCase()}
               </h2>
-              <p className="text-white text-sm font-semibold bg-black/30 px-4 py-2 rounded-full">
+              <span className="ml-auto text-gray-600 text-sm font-semibold">
                 {category.products.length} sản phẩm
-              </p>
+              </span>
             </div>
 
-            {/* Product Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {/* Product Grid - nhỏ hơn, max-width */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
               {category.products.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
@@ -127,7 +121,7 @@ const AllCategoriesWithProducts = () => {
 
             {/* View All Button */}
             <div className="text-center mt-6">
-              <button className="bg-white text-gray-900 px-8 py-3 rounded-lg font-bold hover:bg-gray-100 transition-colors shadow-lg">
+              <button className="bg-red-600 text-white px-8 py-2 rounded-lg font-bold hover:bg-red-700 transition-colors shadow-lg text-sm">
                 Xem tất cả {category.name}
               </button>
             </div>

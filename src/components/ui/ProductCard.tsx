@@ -1,15 +1,34 @@
 import { Product } from '@/lib/api-client';
 import { ShoppingCart, Star } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface ProductCardProps {
   product: Product;
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
+  const navigate = useNavigate();
   const price = Number(product.price);
   const salePrice = product.sale_price ? Number(product.sale_price) : null;
   const discount = product.discount_percentage || 
     (salePrice ? Math.round((1 - salePrice / price) * 100) : 0);
+  
+  // Get inventory quantity - API returns inventory_quantity
+  const quantity = product.inventory_quantity || product.stock_quantity || 0;
+  const hasStock = quantity > 0;
+  
+  // Navigate to product detail page
+  const handleProductClick = () => {
+    navigate(`/product/${product.slug || product.id}`);
+  };
+        
+  // Handle image URL - support relative and absolute paths
+  const getImageUrl = (imageUrl?: string) => {
+    if (!imageUrl) return '/placeholder-product.png';
+    if (imageUrl.startsWith('http')) return imageUrl;
+    if (imageUrl.startsWith('/')) return `http://localhost:3201${imageUrl}`;
+    return `http://localhost:3201/${imageUrl}`;
+  };
 
   return (
     <div className="bg-white border-2 border-red-600 rounded-lg overflow-hidden hover:shadow-xl transition-all">
@@ -28,9 +47,12 @@ const ProductCard = ({ product }: ProductCardProps) => {
       {/* Hình ảnh sản phẩm */}
       <div className="relative h-64 bg-white p-4">
         <img
-          src={product.image_url || '/placeholder-product.png'}
+          src={getImageUrl(product.featured_image || product.image_url)}
           alt={product.name}
           className="w-full h-full object-contain"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = '/placeholder-product.png';
+          }}
         />
       </div>
 
@@ -79,23 +101,21 @@ const ProductCard = ({ product }: ProductCardProps) => {
         )}
 
         {/* Số lượng còn lại */}
-        {product.stock_quantity !== undefined && (
-          <p className="text-xs text-gray-500 mb-3">
-            Số lượng: {product.stock_quantity > 0 ? `${product.stock_quantity} sản phẩm` : 'Hết hàng'}
-          </p>
-        )}
+        <p className="text-xs text-gray-500 mb-3">
+          Số lượng: {hasStock ? `${quantity} sản phẩm` : 'Hết hàng'}
+        </p>
 
-        {/* Button thêm vào giỏ */}
+        {/* Button xem chi tiết */}
         <button 
+          onClick={handleProductClick}
           className={`w-full py-2 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 ${
-            product.stock_quantity && product.stock_quantity > 0
+            hasStock
               ? 'bg-red-600 text-white hover:bg-red-700'
-              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              : 'bg-red-600 text-white hover:bg-red-700'
           }`}
-          disabled={!product.stock_quantity || product.stock_quantity === 0}
         >
           <ShoppingCart className="h-4 w-4" />
-          {product.stock_quantity && product.stock_quantity > 0 ? 'SỐ LƯỢNG CÓ HẠN' : 'HẾT HÀNG'}
+          {hasStock ? 'SỐ LƯỢNG CÓ HẠN' : 'XEM CHI TIẾT'}
         </button>
       </div>
     </div>

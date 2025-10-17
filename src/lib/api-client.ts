@@ -160,11 +160,14 @@ export interface Product {
   description?: string;
   short_description?: string;
   price: string | number;
+  compare_price?: string | number;
   sale_price?: string | number;
   discount_percentage?: number;
   cost_price?: string | number;
   image_url?: string;
-  gallery_images?: string[];
+  featured_image?: string;
+  image_gallery?: string[] | any;
+  inventory_quantity?: number;
   stock_quantity?: number;
   weight?: string;
   dimensions?: string;
@@ -180,6 +183,15 @@ export interface Product {
   published_at?: string;
   created_at?: string;
   updated_at?: string;
+  batch_number?: string;
+  origin_country?: string;
+  manufacturer?: string;
+  ingredients?: string;
+  usage_instructions?: string;
+  warnings?: string;
+  track_inventory?: number;
+  low_stock_threshold?: number;
+  expiry_date?: string;
   brand?: Brand;
 }
 
