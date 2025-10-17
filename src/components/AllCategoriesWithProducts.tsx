@@ -14,18 +14,16 @@ const AllCategoriesWithProducts = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Màu nền cho các danh mục (xoay vòng các màu)
 
 
   useEffect(() => {
     const fetchAllCategories = async () => {
       try {
         setLoading(true);
-        console.log('Fetching all categories with products...');
-
+      
         const response = await apiClient.get('/categories/all/with-products');
 
-        console.log('All categories response:', response);
+        console.log('danh mục categories và products:', response);
 
         // Lọc ra các danh mục có sản phẩm
         let categoriesData: Category[] = [];
@@ -104,7 +102,7 @@ const AllCategoriesWithProducts = () => {
             <div className="flex items-center gap-3 mb-6">
               <div className="bg-red-600 h-10 w-1 rounded-full"></div>
               <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-              
+
                 {category.name.toUpperCase()}
               </h2>
               <span className="ml-auto text-gray-600 text-sm font-semibold">
@@ -112,7 +110,7 @@ const AllCategoriesWithProducts = () => {
               </span>
             </div>
 
-            {/* Product Grid - nhỏ hơn, max-width */}
+       
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
               {category.products.map((product) => (
                 <ProductCard key={product.id} product={product} />
@@ -121,7 +119,7 @@ const AllCategoriesWithProducts = () => {
 
             {/* View All Button */}
             <div className="text-center mt-6">
-              <button className="bg-red-600 text-white px-8 py-2 rounded-lg font-bold hover:bg-red-700 transition-colors shadow-lg text-sm">
+              <button className="bg-red-700 text-white px-8 py-2 rounded-lg font-bold hover:bg-red-800 transition-colors shadow-lg text-sm">
                 Xem tất cả {category.name}
               </button>
             </div>
