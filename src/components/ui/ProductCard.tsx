@@ -4,14 +4,18 @@ import { useNavigate } from 'react-router-dom';
 
 interface ProductCardProps {
   product: Product;
+  soldQuantity?: number; // Số lượng đã bán (cho Flash Sale)
 }
 
-const ProductCard = ({ product }: ProductCardProps) => {
+const ProductCard = ({ product, soldQuantity }: ProductCardProps) => {
   const navigate = useNavigate();
-  const price = Number(product.price);
-  const salePrice = product.sale_price ? Number(product.sale_price) : null;
+  const price = Number(product.price); // Giá hiện tại (giá bán)
+  const comparePrice = product.compare_price ? Number(product.compare_price) : null; // Giá gốc để so sánh
+  const salePrice = product.sale_price ? Number(product.sale_price) : null; // Giá khuyến mãi (nếu có)
+  
+  // Tính phần trăm giảm giá
   const discount = product.discount_percentage || 
-    (salePrice ? Math.round((1 - salePrice / price) * 100) : 0);
+    (comparePrice && comparePrice > price ? Math.round((1 - price / comparePrice) * 100) : 0);
   
   // Get inventory quantity - API returns inventory_quantity
   const quantity = product.inventory_quantity || product.stock_quantity || 0;
@@ -19,18 +23,21 @@ const ProductCard = ({ product }: ProductCardProps) => {
   
   // Navigate to product detail page
   const handleProductClick = () => {
-    navigate(`/product/${product.slug || product.id}`);
+    navigate(`/product/${product.id}`);
   };
         
  
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-md  transition-all duration-300 cursor-pointer">
+    <div 
+      onClick={handleProductClick}
+      className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-md  transition-all duration-300 cursor-pointer hover:shadow-xl hover:-translate-y-1"
+    >
       {/* Badge khuyến mại */}
       {product.is_on_sale && discount > 0 && (
         <div className="relative">
          
-          <div className="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 rounded-full z-10">
+<div className="absolute top-2 right-2 bg-red-600 text-white text-sm font-bold px-3 py-1.5 rounded-full shadow-md z-10">
             <span className="text-sm font-bold">-{discount}%</span>
           </div>
         </div>
@@ -50,34 +57,45 @@ const ProductCard = ({ product }: ProductCardProps) => {
       </div>
 
       {/* Thông tin sản phẩm */}
-      <div className="p-1 margin-top-1">
-        {/* Tên sản phẩm */}
-        <h3 className="text-sm font-semibold text-black-800 mb-2 h-12 line-clamp-2">
-          {product.name}
-        </h3>
+      <div className="p-1 margin-top-0.5">
+       {/* Tên sản phẩm + rating */}
+<div className="flex flex-col">
+  <h3 className="  text-sl font-semibold text-gray-600 leading-[1.1] mb-3">
+    {product.name}
+  </h3>
 
-        {/* Rating    HOÀNG SAO  */} 
-        <div className="flex items-center gap-1">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <Star key={star} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-          ))}
-        </div>
-
+  <div className="flex items-center gap-[1px] mt-[5px]">
+    {[1, 2, 3, 4, 5].map((star) => (
+      <Star
+        key={star}
+        className="h-3 w-3 fill-yellow-400 text-yellow-400"
+      />
+    ))}
+  </div>
+</div>
         {/* Giá */}
         <div className="mb-3">
-          {salePrice ? (
+          {comparePrice && comparePrice > price ? (
             <div>
-              <div className="flex items-center gap-2">
-                <span className="text-xl font-bold text-red-600">
-                  {salePrice.toLocaleString('vi-VN')}đ
-                </span>
-                <span className="text-sm bg-red-100 text-red-600 px-2 py-0.5 rounded">
-                  -{discount}%
-                </span>
-              </div>
-              <span className="text-sm text-gray-500 line-through">
+              <span className="text-xl font-bold text-red-600">
                 {price.toLocaleString('vi-VN')}đ
               </span>
+              <div>
+                <span className="text-sm text-gray-500 line-through">
+                  {comparePrice.toLocaleString('vi-VN')}đ
+                </span>
+              </div>
+            </div>
+          ) : salePrice ? (
+            <div>
+              <span className="text-xl font-bold text-red-600">
+                {salePrice.toLocaleString('vi-VN')}đ
+              </span>
+              <div>
+                <span className="text-sm text-gray-500 line-through">
+                  {price.toLocaleString('vi-VN')}đ
+                </span>
+              </div>
             </div>
           ) : (
             <span className="text-xl font-bold text-gray-800">
@@ -86,13 +104,16 @@ const ProductCard = ({ product }: ProductCardProps) => {
           )}
         </div>
 
-        {/* Mô tả ngắn */}
-        
-        <div className='' >
+        {/* Số lượng đã bán (Flash Sale) */}
+        {soldQuantity !== undefined && (
+          <div className="mb-2">
+            <span className="text-xs bg-orange-100 text-orange-600 px-2 py-1 rounded-full font-semibold">
+              Đã bán {soldQuantity}
+            </span>
+          </div>
+        )}
 
-        </div>
-
-     
+        {/* Mô tả ngắn - Đã xóa */}
         
       </div>
     </div>

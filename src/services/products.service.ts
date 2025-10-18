@@ -1,4 +1,8 @@
-import { apiClient, Product } from '@/lib/api-client';
+import { apiClient, Product , } from '@/lib/api-client';
+import { ProductDetailData } from '@/lib/api-client';
+
+
+
 
 export class ProductsService {
   // Lấy sản phẩm đang khuyến mại
@@ -87,5 +91,16 @@ export class ProductsService {
       console.error('Error in getBestsellerProducts:', error);
       throw error;
     }
+  }
+ 
+  // Lấy chi tiết sản phẩm theo ID
+  async getProductById(productId: number): Promise<ProductDetailData | null> {
+    try {
+      const response = await apiClient.get<ProductDetailData>(`/products/${productId}`);
+      return response || null;
+    } catch (error) {
+      console.error('Lỗi lấy getProductById:', error);
+      return null;
+    } 
   }
 }

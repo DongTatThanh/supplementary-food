@@ -112,7 +112,13 @@ const FlashSale = () => {
                 is_on_sale: 1 // 1 = true trong database
               };
 
-              return <ProductCard key={item.id} product={productData} />;
+              return (
+                <ProductCard 
+                  key={item.id} 
+                  product={productData} 
+                  soldQuantity={item.flash_sale.sold_quantity}
+                />
+              );
             })}
           </div>
         </div>

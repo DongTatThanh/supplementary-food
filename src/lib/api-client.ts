@@ -313,6 +313,85 @@ export interface FlashSaleResponse {
 }
 
 
+export interface ProductVariant {
+  id: number;
+  variant_name: string;
+  size?: string;
+  flavor?: string;
+  price: string;
+  compare_price?: string;
+  inventory_quantity: number;
+  is_default: number;
+}
+
+export interface ProductReviewResponse {
+  success: boolean;
+  data: ProductReview[];
+  message?: string;
+}
+
+export interface ProductReview {
+  id: number;
+  user_id: number;
+  rating: number;
+  title: string;
+  comment: string;
+  created_at: string;
+  is_verified_purchase: number;
+}
+
+export interface ProductAttributeResponse {
+  success: boolean;
+  data: ProductAttribute[];
+  message?: string;
+}
+
+export interface ProductAttribute {
+  attribute_name: string;
+  attribute_value: string;
+  unit?: string;
+}
+
+export interface ProductListResponse {
+  success: boolean;
+  data: Product[];
+  message?: string;
+} 
+
+export interface ProductDetailData {
+  id: number;
+  name: string;
+  slug: string;
+  sku: string;
+  description: string;
+  short_description: string;
+  price: string;
+  compare_price?: string;
+  featured_image: string;
+  image_gallery?: string[];
+  inventory_quantity: number;
+  is_on_sale: number;
+  brand?: {
+    name: string;
+    logo_url: string;
+  };
+  category?: {
+    name: string;
+  };
+  variants?: ProductVariant[];
+  reviews?: ProductReview[];
+  attributes?: ProductAttribute[];
+  ingredients?: string;
+  usage_instructions?: string;
+  warnings?: string;
+}
+
+export interface ProductDetailResponse {
+  success: boolean;
+  data: ProductDetailData;
+  message?: string;
+}
+
 export { ApiClient };
 
 

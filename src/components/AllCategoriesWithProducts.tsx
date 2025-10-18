@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { Product, apiClient  } from '@/lib/api-client';
 import ProductCard from './ui/ProductCard';
 import { Category } from '../lib/api-client';
-import { ShoppingBag } from 'lucide-react';
 
 
 const AllCategoriesWithProducts = () => {
@@ -62,23 +61,17 @@ const AllCategoriesWithProducts = () => {
       {categories.map((category, index) => (
         <section key={category.id} className="py-10">
           <div className="container mx-auto px-4">
-            {/* Header danh mục */}
-            <div className="flex items-center gap-4 mb-6 relative">
-              <div className="bg-red-600 h-10 w-1 rounded-full shadow-md"></div>
-              <div>
-                <h2 className="text-2xl font-extrabold text-gray-800 tracking-tight flex items-center gap-2">
-                  <ShoppingBag className="w-6 h-6 text-red-600" />
-                  {category.name.toUpperCase()}
-                </h2>
-                <p className="text-sm text-gray-500 mt-1">
-                  
-                </p>
-              </div>
-              {/* Thanh nhấn bên phải */}
-              
+          {/* Header danh mục */}
+          <div className="mb-6">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="bg-red-600 h-8 w-1rounded-full"></div>
+              <h2 className="text-2xl font-bold text-gray-800">
+                {category.name.toUpperCase()}
+              </h2>
             </div>
-
-            {/* Grid sản phẩm */}
+            {/* Đường kẻ đỏ dưới text */}
+            <div className="h-[2px] bg-red-600 w-full"></div>
+          </div>            {/* Grid sản phẩm */}
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
               {category.products.slice(0, 10).map((product) => (
                 <div
@@ -92,10 +85,8 @@ const AllCategoriesWithProducts = () => {
 
             {/* Nút xem tất cả */}
             <div className="text-center mt-8">
-              <button className="relative inline-flex items-center gap-2 bg-gradient-to-r from-red-600 to-orange-500 text-white font-semibold px-8 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all hover:scale-[1.02]">
-                <ShoppingBag size={18} />
-                Xem tất cả {category.name}
-                <span className="absolute inset-0 rounded-lg ring-2 ring-red-400/40 animate-pulse opacity-0 hover:opacity-100 transition-opacity"></span>
+               <button className="bg-red-600 text-white font-semibold px-8 py-2 rounded-lg hover:bg-red-700 transition-colors border-destructive">
+                Xem Thêm 
               </button>
             </div>
           </div>
