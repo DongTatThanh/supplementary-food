@@ -1,4 +1,4 @@
-import { Product } from '@/lib/api-client';
+import { Product, getImageUrl } from '@/lib/api-client';
 import { ShoppingCart, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -22,22 +22,14 @@ const ProductCard = ({ product }: ProductCardProps) => {
     navigate(`/product/${product.slug || product.id}`);
   };
         
-  // Handle image URL - support relative and absolute paths
-  const getImageUrl = (imageUrl?: string) => {
-    if (!imageUrl) return '/placeholder-product.png';
-    if (imageUrl.startsWith('http')) return imageUrl;
-    if (imageUrl.startsWith('/')) return `http://localhost:3201${imageUrl}`;
-    return `http://localhost:3201/${imageUrl}`;
-  };
+ 
 
   return (
-    <div className="bg-white border-2 border-red-600 rounded-lg overflow-hidden hover:shadow-xl transition-all">
+    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-md  transition-all duration-300 cursor-pointer">
       {/* Badge khuyến mại */}
       {product.is_on_sale && discount > 0 && (
         <div className="relative">
-          <div className="absolute top-2 left-2 bg-red-600 text-white px-3 py-1 rounded-md z-10">
-            <span className="text-xs font-bold">WHEY SINH VIÊN</span>
-          </div>
+         
           <div className="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 rounded-full z-10">
             <span className="text-sm font-bold">-{discount}%</span>
           </div>
@@ -45,7 +37,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
       )}
 
       {/* Hình ảnh sản phẩm */}
-      <div className="relative h-64 bg-white p-4">
+      <div className="relative h-64 bg-white p-0.5  hover:caption_dropdowns  hover:shadow-xl hover:-translate-y-2" >
         <img
           src={getImageUrl(product.featured_image || product.image_url)}
           alt={product.name}
@@ -54,17 +46,18 @@ const ProductCard = ({ product }: ProductCardProps) => {
             (e.target as HTMLImageElement).src = '/placeholder-product.png';
           }}
         />
+
       </div>
 
       {/* Thông tin sản phẩm */}
-      <div className="p-4">
+      <div className="p-1 margin-top-1">
         {/* Tên sản phẩm */}
-        <h3 className="text-sm font-semibold text-gray-800 mb-2 h-12 line-clamp-2">
+        <h3 className="text-sm font-semibold text-black-800 mb-2 h-12 line-clamp-2">
           {product.name}
         </h3>
 
-        {/* Rating */}
-        <div className="flex items-center gap-1 mb-2">
+        {/* Rating    HOÀNG SAO  */} 
+        <div className="flex items-center gap-1">
           {[1, 2, 3, 4, 5].map((star) => (
             <Star key={star} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
           ))}
@@ -94,29 +87,13 @@ const ProductCard = ({ product }: ProductCardProps) => {
         </div>
 
         {/* Mô tả ngắn */}
-        {product.description && (
-          <p className="text-xs text-gray-600 mb-3 line-clamp-2">
-            {product.description}
-          </p>
-        )}
+        
+        <div className='' >
 
-        {/* Số lượng còn lại */}
-        <p className="text-xs text-gray-500 mb-3">
-          Số lượng: {hasStock ? `${quantity} sản phẩm` : 'Hết hàng'}
-        </p>
+        </div>
 
-        {/* Button xem chi tiết */}
-        <button 
-          onClick={handleProductClick}
-          className={`w-full py-2 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 ${
-            hasStock
-              ? 'bg-red-600 text-white hover:bg-red-700'
-              : 'bg-red-600 text-white hover:bg-red-700'
-          }`}
-        >
-          <ShoppingCart className="h-4 w-4" />
-          {hasStock ? 'SỐ LƯỢNG CÓ HẠN' : 'XEM CHI TIẾT'}
-        </button>
+     
+        
       </div>
     </div>
   );

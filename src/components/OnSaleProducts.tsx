@@ -22,9 +22,10 @@ const OnSaleProducts = () => {
         
         setProducts(response);
         setError(null);
-      } catch (err: any) {
+      } catch (err) {
         console.error('Error fetching on-sale products:', err);
-        setError(err.message || 'Không thể tải danh sách sản phẩm khuyến mại');
+        const errorMessage = err instanceof Error ? err.message : 'Không thể tải danh sách sản phẩm khuyến mại';
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }

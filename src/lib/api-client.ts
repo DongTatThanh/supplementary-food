@@ -94,6 +94,15 @@ class ApiClient {
   }
 }
 
+
+// Helper function để tạo URL đầy đủ cho ảnh
+
+export const getImageUrl = (imageUrl: string | null) => {
+  if (!imageUrl) return '/placeholder.png';
+  if (imageUrl.startsWith('http')) return imageUrl;
+  return `${API_BASE_URL}${imageUrl}`;
+};
+
 // Export API client instance
 export const apiClient = new ApiClient(API_BASE_URL);
 
@@ -135,17 +144,28 @@ export interface LoginData {
 export interface DiscountCode{
   id: number;
   code: string;
+  name?: string;
+  type?: string;
+  value?: string;
   discount_percentage?: number;
   discount_amount?: number;
+  minimum_order_amount?: string;
   min_order_value?: number;
+  maximum_discount_amount?: string;
   max_discount_amount?: number;
   start_date: string;
   end_date: string;
   usage_limit?: number;
+  usage_limit_per_customer?: number;
   used_count?: number;
-  is_active: boolean;
+  is_active: number | boolean;
   description?: string;
   created_at?: string;
+  updated_at?: string;
+  image_url?: string; // Đổi từ image sang image_url để khớp với API
+  applicable_to?: string;
+  applicable_items?: any;
+  created_by?: number;
 }
 export interface DiscountCodeResponse {
   success: boolean;
@@ -222,8 +242,75 @@ export interface BrandsResponse {
   success: boolean;
   data: Brand[];
   message?: string;
-} 
+}
 
+export interface Category {
+  id: number;
+  name: string;
+  slug: string;
+  description?: string;
+  image_url?: string;
+  icon_class?: string;
+  parent_id?: number | null;
+  level?: number;
+  sort_order?: number;
+  is_featured?: number;
+  is_active?: number;
+  seo_title?: string;
+  seo_description?: string;
+  created_at?: string;
+  updated_at?: string;
+  products?: Product[];
+}
+
+export interface CategoriesResponse {
+  success: boolean;
+  data: Category[];
+  message?: string;
+}
+
+export interface FlashSaleInfo {
+  id: number;
+  name: string;
+  description?: string;
+  start_time: string;
+  end_time: string;
+  time_remaining: {
+    days: number;
+    hours: number;
+    minutes: number;
+    seconds: number;
+    total_seconds: number;
+  };
+}
+
+export interface FlashSaleProduct {
+  id: number;
+  name: string;
+  slug: string;
+  featured_image: string | null;
+  price: string;
+  brand?: Brand;
+  category?: Category;
+  flash_sale: {
+    item_id: number;
+    original_price: string;
+    sale_price: string;
+    discount_percent: number;
+    max_quantity: number;
+    sold_quantity: number;
+    remaining: number;
+  };
+}
+
+export interface FlashSaleResponse {
+  success: boolean;
+  data: {
+    flashSale: FlashSaleInfo;
+    products: FlashSaleProduct[];
+  };
+  message?: string;
+}
 
 
 export { ApiClient };

@@ -9,6 +9,7 @@ import DiscountCodeList from "@/components/DiscountCodeList";
 import OnSaleProducts from "@/components/OnSaleProducts";
 
 import AllCategoriesWithProducts from "@/components/AllCategoriesWithProducts";
+import FlashSale from "@/components/FlashSale ";
 
 const Index = () => {
   return (
@@ -16,9 +17,10 @@ const Index = () => {
       <Header /> 
       <HeroSection />
       <DiscountCodeList />
+      <FlashSale /> 
       
       {/* Sản phẩm khuyến mại */}
-      <OnSaleProducts />
+
       
       {/* Tất cả danh mục với sản phẩm từ API */}
       <AllCategoriesWithProducts />

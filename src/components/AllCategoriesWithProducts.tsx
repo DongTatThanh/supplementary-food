@@ -1,13 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Product, apiClient } from '@/lib/api-client';
+import { Product, apiClient  } from '@/lib/api-client';
 import ProductCard from './ui/ProductCard';
+import { Category } from '../lib/api-client';
+import { ShoppingBag } from 'lucide-react';
 
-interface Category {
-  id: number;
-  name: string;
-  slug: string;
-  products: Product[];
-}
 
 const AllCategoriesWithProducts = () => {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -23,8 +19,6 @@ const AllCategoriesWithProducts = () => {
       
         const response = await apiClient.get('/categories/all/with-products');
 
-        console.log('danh mục categories và products:', response);
-
         // Lọc ra các danh mục có sản phẩm
         let categoriesData: Category[] = [];
         
@@ -32,16 +26,14 @@ const AllCategoriesWithProducts = () => {
         if (Array.isArray(response)) {
           categoriesData = response.filter((cat: Category) => cat.products && cat.products.length > 0);
         } else {
-          console.warn('Response is not an array:', response);
           categoriesData = [];
         }
 
-        console.log('Filtered categories:', categoriesData);
         setCategories(categoriesData);
         setError(null);
-      } catch (err: any) {
-        console.error('Error fetching all categories:', err);
-        setError(err.message || 'Không thể tải danh sách danh mục');
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Không thể tải danh sách danh mục';
+        setError(errorMessage);
         setCategories([]);
       } finally {
         setLoading(false);
@@ -51,32 +43,7 @@ const AllCategoriesWithProducts = () => {
     fetchAllCategories();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="w-full py-12 bg-gradient-to-b from-gray-50 to-white">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-900 border-t-transparent"></div>
-            <span className="ml-4 text-blue-900 text-lg font-semibold">Đang tải danh mục...</span>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="w-full py-12 bg-gradient-to-b from-gray-50 to-white">
-        <div className="container mx-auto px-4">
-          <div className="text-center p-8">
-            <div className="bg-red-50 border border-red-200 rounded-lg p-6 inline-block">
-              <p className="text-red-600 font-medium">⚠️ {error}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+ 
 
   if (!categories || categories.length === 0) {
     return (
@@ -91,36 +58,44 @@ const AllCategoriesWithProducts = () => {
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full bg-gradient-to-b from-white to-red-50">
       {categories.map((category, index) => (
-        <section
-          key={category.id}
-          className="py-8"
-        >
+        <section key={category.id} className="py-10">
           <div className="container mx-auto px-4">
-            {/* Header với thanh màu đỏ */}
-            <div className="flex items-center gap-3 mb-6">
-              <div className="bg-red-600 h-10 w-1 rounded-full"></div>
-              <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-
-                {category.name.toUpperCase()}
-              </h2>
-              <span className="ml-auto text-gray-600 text-sm font-semibold">
-                {category.products.length} sản phẩm
-              </span>
+            {/* Header danh mục */}
+            <div className="flex items-center gap-4 mb-6 relative">
+              <div className="bg-red-600 h-10 w-1 rounded-full shadow-md"></div>
+              <div>
+                <h2 className="text-2xl font-extrabold text-gray-800 tracking-tight flex items-center gap-2">
+                  <ShoppingBag className="w-6 h-6 text-red-600" />
+                  {category.name.toUpperCase()}
+                </h2>
+                <p className="text-sm text-gray-500 mt-1">
+                  
+                </p>
+              </div>
+              {/* Thanh nhấn bên phải */}
+              
             </div>
 
-       
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-              {category.products.map((product) => (
-                <ProductCard key={product.id} product={product} />
+            {/* Grid sản phẩm */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+              {category.products.slice(0, 10).map((product) => (
+                <div
+                  key={product.id}
+                  className="transition-transform duration-200 hover:scale-[1.02]"
+                >
+                  <ProductCard product={product} />
+                </div>
               ))}
             </div>
 
-            {/* View All Button */}
-            <div className="text-center mt-6">
-              <button className="bg-red-700 text-white px-8 py-2 rounded-lg font-bold hover:bg-red-800 transition-colors shadow-lg text-sm">
+            {/* Nút xem tất cả */}
+            <div className="text-center mt-8">
+              <button className="relative inline-flex items-center gap-2 bg-gradient-to-r from-red-600 to-orange-500 text-white font-semibold px-8 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all hover:scale-[1.02]">
+                <ShoppingBag size={18} />
                 Xem tất cả {category.name}
+                <span className="absolute inset-0 rounded-lg ring-2 ring-red-400/40 animate-pulse opacity-0 hover:opacity-100 transition-opacity"></span>
               </button>
             </div>
           </div>
