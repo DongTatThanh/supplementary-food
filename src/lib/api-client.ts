@@ -371,6 +371,9 @@ export interface ProductDetailData {
   image_gallery?: string[];
   inventory_quantity: number;
   is_on_sale: number;
+  is_bestseller?: number;
+  manufacturer?: string;
+  origin_country?: string;
   brand?: {
     name: string;
     logo_url: string;
