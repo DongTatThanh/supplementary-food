@@ -16,7 +16,6 @@ import { ProductVariantSelector } from '@/components/ProductDetail/ProductVarian
 import { DiscountCodeList } from '@/components/ProductDetail/DiscountCodeList';
 import { ProductTabs } from '@/components/ProductDetail/ProductTabs';
 
-
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
