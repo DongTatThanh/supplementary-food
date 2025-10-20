@@ -1,85 +1,38 @@
-import { useState } from "react";
-import { Menu, ChevronRight, Star, Flame, Heart, Dumbbell, Coffee, Shield, Leaf, FlaskConical, icons } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Menu, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { ProductsService } from "@/services/products.service";
+import { Category, getImageUrl } from "@/lib/api-client";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Badge } from "@/components/ui/badge";
 
-const categoryItems = [
-  {
-    title: "Thương Hiệu Nổi Bật ",
-    image: "/assets/img_swiper/4.png", // Dùng ảnh thay vì icon
-    subtitle: "",
-    hasArrow: true,   // hiển thị mũi tên
-    isHeader: true, // hiển thị chữ đậm 
-    badge: "HOT",
-    link: "/products/whey-protein"
-  },
-  {
-    title: "Whey Protein ",
-    image: "/assets/menu_list/5.png",
-    subtitle: "",
-    hasArrow: false,
-    isHeader: true,
-    link: "/products/whey-protein"
-  },
-  {
-    title: "Mass Tăng Cân    ",
-    image: "/assets/menu_list/2.png",
-    subtitle: "",
-    hasArrow: false,
-    link: "/products/sua-tang-mo"
-  },
-  {
-    title: "BCAAs, EAAs Phục Hồi Cơ ",
-    image: "/assets/menu_list/7.png",
-    subtitle: "",
-    hasArrow: false,
-
-  },
-  {
-    title: "HỖ TRỢ GIẢM CÂN ",
-    image: "/assets/menu_list/6.png",
-    subtitle: "",
-    hasArrow: false
-  },
-  {
-    title: "VITAMIN - KHOÁNG CHẤT",
-    image: "/assets/menu_list/7.png",
-    subtitle: "",
-    hasArrow: false
-  },
-  {
-    title: "PHỤ KIÊN TẬP GYM ",
-    image: "/assets/menu_list/8.png",
-    subtitle: "",
-    hasArrow: false
-  },
-  {
-    title: "QUẦN ÁO GYM ",
-    image: "/assets/menu_list/9.png",
-    subtitle: "",
-    hasArrow: false
-  },
-  {
-    title: "Sức Khỏe - Sinh Lý ",
-    image: "/assets/menu_list/4.png",
-
-    subtitle: "",
-    hasArrow: false
-  },
- 
-  
- 
-];
+const productsService = new ProductsService();
 
 const CategoryDrawer = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setLoading(true);
+        const response = await productsService.getAllCategories();
+        setCategories(response);
+      } catch (err) {
+        console.error('lỖI LÁY api', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
@@ -95,52 +48,52 @@ const CategoryDrawer = () => {
         </div>
         
         <div className="py-1">
-          {categoryItems.map((item, index) => (
-            <DropdownMenuItem
-              key={index}
-              className={`flex items-center justify-between p-3 cursor-pointer ${
-                item.isHeader ? 'bg-muted/30 font-semibold' : ''
-              }`}
-              onClick={() => {
-                console.log('Clicked:', item.title);
-                setIsOpen(false);
-              }}
-            > 
-              <div className="flex items-center gap-2 flex-1">
-                {item.image ? (
-                  <img 
-                    src={item.image} 
-                    alt={item.title} 
-                    className="h-6 w-6 object-contain"
-                  />
-                ) : (
-                  <div className="h-6 w-6 flex items-center justify-center">
-                    {/* Fallback icon if no image */}
-                  
-                  </div>
-                )}
-                <div className="flex flex-col">
-                  <div className="flex items-center gap-2">
-                    <span className={`text-xs ${item.isHeader ? 'font-semibold' : 'font-medium'}`}>
-                      {item.title}
+          {loading ? (
+            <div className="p-4 text-center text-sm text-muted-foreground">
+              Đang tải...
+            </div>
+          ) : categories.length === 0 ? (
+            <div className="p-4 text-center text-sm text-muted-foreground">
+              Không có danh mục
+            </div>
+          ) : (
+            categories.map((item) => (
+              <DropdownMenuItem
+                key={item.id}
+                className="flex items-center justify-between p-3 cursor-pointer"
+                onClick={() => {
+                  console.log('Clicked category:', item.name);
+                  setIsOpen(false);
+                }}
+              > 
+                <div className="flex items-center gap-2 flex-1">
+                  {item.image_url ? (
+                    <img 
+                      src={getImageUrl(item.image_url)} 
+                      alt={item.name} 
+                      className="h-6 w-6 object-contain"
+                    />
+                  ) : (
+                    <div className="h-6 w-6 flex items-center justify-center bg-gray-100 rounded">
+                      <Menu className="h-4 w-4 text-gray-400" />
+                    </div>
+                  )}
+                  <div className="flex flex-col">
+                    <span className="text-xs font-medium">
+                      {item.name}
                     </span>
-                    {item.badge && (
-                      <Badge variant="destructive" className="text-[10px] px-1 py-0 h-4">
-                        {item.badge}
-                      </Badge>
+                    {item.description && (
+                      <span className="text-[10px] text-muted-foreground line-clamp-1">
+                        {item.description}
+                      </span>
                     )}
                   </div>
-                  {item.subtitle && (
-                    <span className="text-[10px] text-muted-foreground">{item.subtitle}</span>
-                  )}
                 </div>
-              </div>
-              
-              {item.hasArrow && (
+                
                 <ChevronRight className="h-3 w-3 text-muted-foreground" />
-              )}
-            </DropdownMenuItem>
-          ))}
+              </DropdownMenuItem>
+            ))
+          )}
         </div>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -1,3 +1,5 @@
+
+
 import { apiClient, Product , } from '@/lib/api-client';
 import { ProductDetailData } from '@/lib/api-client';
 
@@ -103,4 +105,14 @@ export class ProductsService {
       return null;
     } 
   }
+  // lấy tất cả cac dnah mục category
+   async getAllCategories(): Promise<any[] | null> {
+    try {
+       const response = await apiClient.get<any[]>('/categories');
+        return response || null;
+    } catch (error) {
+      console.error('lỗi danh mục category:', error);
+      return null;
+    } 
+    }
 }
