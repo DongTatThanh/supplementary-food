@@ -10,12 +10,13 @@ import OnSaleProducts from "@/components/OnSaleProducts";
 
 import AllCategoriesWithProducts from "@/components/AllCategoriesWithProducts";
 import FlashSale from "@/components/FlashSale ";
+import Banner from "@/components/Banner";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
-      <Header /> 
-      <HeroSection />
+
+      <Banner/>
       <DiscountCodeList />
       <FlashSale /> 
       

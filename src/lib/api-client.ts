@@ -313,7 +313,8 @@ export interface FlashSaleResponse {
 }
 
 
-export interface ProductVariant {
+export interface ProductVariant
+{
   id: number;
   variant_name: string;
   size?: string;
@@ -324,13 +325,15 @@ export interface ProductVariant {
   is_default: number;
 }
 
-export interface ProductReviewResponse {
+export interface ProductReviewResponse
+ {
   success: boolean;
   data: ProductReview[];
   message?: string;
 }
 
-export interface ProductReview {
+export interface ProductReview
+ {
   id: number;
   user_id: number;
   rating: number;
@@ -340,25 +343,29 @@ export interface ProductReview {
   is_verified_purchase: number;
 }
 
-export interface ProductAttributeResponse {
+export interface ProductAttributeResponse
+ {
   success: boolean;
   data: ProductAttribute[];
   message?: string;
 }
 
-export interface ProductAttribute {
+export interface ProductAttribute
+ {
   attribute_name: string;
   attribute_value: string;
   unit?: string;
 }
 
-export interface ProductListResponse {
+export interface ProductListResponse 
+{
   success: boolean;
   data: Product[];
   message?: string;
 } 
 
-export interface ProductDetailData {
+export interface ProductDetailData 
+{
   id: number;
   name: string;
   slug: string;
@@ -389,9 +396,30 @@ export interface ProductDetailData {
   warnings?: string;
 }
 
-export interface ProductDetailResponse {
+export interface ProductDetailResponse 
+{
   success: boolean;
   data: ProductDetailData;
+  message?: string;
+}
+export interface Banner {
+  id: number;
+  name: string;
+  image_url: string;
+  link_url?: string;
+  link_target?: string;  
+  position: string;      
+  sort_order?: number;
+  start_date?: string;
+  end_date?: string;
+  is_active: number;     
+  created_by?: number;
+  created_at?: string;
+  updated_at?: string;
+}
+export interface BannersResponse {  
+  success: boolean; 
+  data: Banner[];
   message?: string;
 }
 

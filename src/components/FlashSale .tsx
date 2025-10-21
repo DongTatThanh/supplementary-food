@@ -105,11 +105,20 @@ const FlashSale = () => {
               
               // Chuyển đổi FlashSaleProduct sang Product format để dùng với ProductCard
               const productData = {
-                ...item,
-                sale_price: item.flash_sale.sale_price,
-                price: item.flash_sale.original_price,
+                id: item.id,
+                name: item.name,
+                slug: item.slug,
+                featured_image: item.featured_image,
+                image_url: item.featured_image,
+                brand: item.brand,
+                category: item.category,
+                // Giá từ Flash Sale
+                price: item.flash_sale.original_price,      // 850000
+                sale_price: item.flash_sale.sale_price,     // 595000
+                compare_price: null,                         // Không dùng compare_price
                 discount_percentage: item.flash_sale.discount_percent,
-                is_on_sale: 1 // 1 = true trong database
+                is_on_sale: 1,
+                inventory_quantity: item.flash_sale.remaining
               };
 
               return (

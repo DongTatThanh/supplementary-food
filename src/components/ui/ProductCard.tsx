@@ -9,13 +9,20 @@ interface ProductCardProps {
 
 const ProductCard = ({ product, soldQuantity }: ProductCardProps) => {
   const navigate = useNavigate();
-  const price = Number(product.price); // Giá hiện tại (giá bán)
-  const comparePrice = product.compare_price ? Number(product.compare_price) : null; // Giá gốc để so sánh
-  const salePrice = product.sale_price ? Number(product.sale_price) : null; // Giá khuyến mãi (nếu có)
+  
+  // Giá hiện tại để hiển thị (ưu tiên sale_price nếu có)
+  const displayPrice = product.sale_price ? Number(product.sale_price) : Number(product.price);
+  
+  // Giá gốc để so sánh (để tính discount)
+  const originalPrice = Number(product.price);
+  const comparePrice = product.compare_price ? Number(product.compare_price) : null;
+  
+  // Giá để so sánh với giá hiển thị (ưu tiên compare_price, fallback về price)
+  const priceToCompare = comparePrice || originalPrice;
   
   // Tính phần trăm giảm giá
   const discount = product.discount_percentage || 
-    (comparePrice && comparePrice > price ? Math.round((1 - price / comparePrice) * 100) : 0);
+    (priceToCompare > displayPrice ? Math.round((1 - displayPrice / priceToCompare) * 100) : 0);
   
   // Get inventory quantity - API returns inventory_quantity
   const quantity = product.inventory_quantity || product.stock_quantity || 0;
@@ -75,31 +82,20 @@ const ProductCard = ({ product, soldQuantity }: ProductCardProps) => {
 </div>
         {/* Giá */}
         <div className="mb-3">
-          {comparePrice && comparePrice > price ? (
+          {priceToCompare > displayPrice ? (
             <div>
               <span className="text-xl font-bold text-red-600">
-                {price.toLocaleString('vi-VN')}đ
+                {displayPrice.toLocaleString('vi-VN')}đ
               </span>
               <div>
                 <span className="text-sm text-gray-500 line-through">
-                  {comparePrice.toLocaleString('vi-VN')}đ
-                </span>
-              </div>
-            </div>
-          ) : salePrice ? (
-            <div>
-              <span className="text-xl font-bold text-red-600">
-                {salePrice.toLocaleString('vi-VN')}đ
-              </span>
-              <div>
-                <span className="text-sm text-gray-500 line-through">
-                  {price.toLocaleString('vi-VN')}đ
+                  {priceToCompare.toLocaleString('vi-VN')}đ
                 </span>
               </div>
             </div>
           ) : (
             <span className="text-xl font-bold text-gray-800">
-              {price.toLocaleString('vi-VN')}đ
+              {displayPrice.toLocaleString('vi-VN')}đ
             </span>
           )}
         </div>

@@ -20,7 +20,7 @@ const slides = [
   {
     id: 1,
     image: "/assets/img_swiper/2.png",
-    title: "GymStore",
+    title: "GymSinhVien",
     subtitle: "Giao diện mới",
     link: "/products/gymstore", // chuyển hướng màn hình 
   },
