@@ -3,6 +3,7 @@ import { Menu, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProductsService } from "@/services/products.service";
 import { Category, getImageUrl } from "@/lib/api-client";
+import { useNavigate } from "react-router-dom"; 
 
 import {
   DropdownMenu,
@@ -17,6 +18,8 @@ const CategoryDrawer = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+   const navigate = useNavigate();
+
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -33,6 +36,10 @@ const CategoryDrawer = () => {
 
     fetchCategories();
   }, []);
+
+  const handleCategoryClick = (categoryId: number) => {
+    navigate(`/category/${categoryId}`);
+  };
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
@@ -62,10 +69,9 @@ const CategoryDrawer = () => {
                 key={item.id}
                 className="flex items-center justify-between p-3 cursor-pointer"
                 onClick={() => {
-                  console.log('Clicked category:', item.name);
-                  setIsOpen(false);
+                  handleCategoryClick(item.id);
                 }}
-              > 
+              >
                 <div className="flex items-center gap-2 flex-1">
                   {item.image_url ? (
                     <img 

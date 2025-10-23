@@ -25,7 +25,7 @@ const AuthTestPage = () => {
       <div className="container mx-auto max-w-2xl space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle>🔐 Authentication Test</CardTitle>
+            <CardTitle> Authentication Test</CardTitle>
             <CardDescription>
               Test đăng nhập/đăng ký với backend API
             </CardDescription>

@@ -442,6 +442,30 @@ export interface ProductsByCategoryResponse {
   data: ProductByCategory[];
   message?: string;
 }
+
+export interface Store {
+  id: number;
+  name: string;
+  address: string;
+  hotline: string;
+  support_phone: string;
+  email: string;
+  opening_hours: string;
+  image: string;
+  map_link: string;
+  description: string;
+  latitude: number;
+  longitude: number;
+  is_active: number;
+  created_at: string;
+  updated_at: string;
+  marquee_text?: string;
+}
+export interface StoresResponse {
+  success: boolean;
+  data: Store[];
+  message?: string;
+}
 export { ApiClient };
 
 
