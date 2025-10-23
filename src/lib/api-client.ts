@@ -422,7 +422,26 @@ export interface BannersResponse {
   data: Banner[];
   message?: string;
 }
+export interface ProductByCategory {
 
+  id: number; // ID danh mục
+  name: string; // Tên danh mục
+  slug?: string;
+  description?: string;
+  image_url?: string;
+  parent_id?: number | null;
+  is_active?: number;
+  created_at?: string;
+  updated_at?: string;
+
+  // Danh sách sản phẩm thuộc danh mục này
+  products: Product[];
+}
+export interface ProductsByCategoryResponse {
+  success: boolean;
+  data: ProductByCategory[];
+  message?: string;
+}
 export { ApiClient };
 
 

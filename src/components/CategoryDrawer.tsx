@@ -42,7 +42,7 @@ const CategoryDrawer = () => {
           Danh mục
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-64 max-h-[500px] overflow-y-auto p-0">
+      <DropdownMenuContent align="start" className="w-64 p-0">
         <div className="p-3 bg-primary text-primary-foreground sticky top-0 z-10">
           <div className="text-left text-white text-sm font-semibold">Danh mục sản phẩm</div>
         </div>

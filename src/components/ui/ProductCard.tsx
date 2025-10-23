@@ -4,10 +4,11 @@ import { useNavigate } from 'react-router-dom';
 
 interface ProductCardProps {
   product: Product;
+  categoryId?: number;
   soldQuantity?: number; // Số lượng đã bán (cho Flash Sale)
 }
 
-const ProductCard = ({ product, soldQuantity }: ProductCardProps) => {
+const ProductCard = ({ product, soldQuantity, categoryId }: ProductCardProps) => {
   const navigate = useNavigate();
   
   // Giá hiện tại để hiển thị (ưu tiên sale_price nếu có)
@@ -32,8 +33,8 @@ const ProductCard = ({ product, soldQuantity }: ProductCardProps) => {
   const handleProductClick = () => {
     navigate(`/product/${product.id}`);
   };
-        
- 
+
+
 
   return (
     <div 
@@ -43,6 +44,8 @@ const ProductCard = ({ product, soldQuantity }: ProductCardProps) => {
       {/* Badge khuyến mại */}
       {product.is_on_sale && discount > 0 && (
         <div className="relative">
+
+
          
 <div className="absolute top-2 right-2 bg-red-600 text-white text-sm font-bold px-3 py-1.5 rounded-full shadow-md z-10">
             <span className="text-sm font-bold">-{discount}%</span>

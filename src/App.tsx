@@ -8,6 +8,7 @@ import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import ProductDetail from "./pages/ProductDetail";
 import Layout from "./components/ui/layout";
+import ProductByCategory from "./pages/ProductByCategory";
 
 
 
@@ -26,7 +27,8 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/product/:id" element={<ProductDetail />} />
-         
+          <Route path="/category/:id" element={<ProductByCategory />} />
+        
           <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>

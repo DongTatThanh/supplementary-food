@@ -56,7 +56,7 @@ export class BannerService {
 
   /**
    * Lấy banners active theo vị trí
-   * @param position - 'homepage_hero', 'sidebar', 'footer', etc.
+   * @param position 
    */
   async getActiveBannersByPosition(position: string): Promise<Banner[]> {
     try {

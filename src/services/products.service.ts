@@ -1,6 +1,6 @@
 
 
-import { apiClient, Product , } from '@/lib/api-client';
+import { apiClient, Product, ProductByCategory, ProductsByCategoryResponse , } from '@/lib/api-client';
 import { ProductDetailData } from '@/lib/api-client';
 
 
@@ -42,13 +42,13 @@ export class ProductsService {
         return response.products;
       }
       
-      // Fallback: Trường hợp response là { data: [...] }
+    
       if (response?.data && Array.isArray(response.data)) {
         console.log('Returning response.data');
         return response.data;
       }
       
-      // Fallback: Response là array trực tiếp
+      
       if (Array.isArray(response)) {
         console.log('Returning response directly');
         return response;
@@ -102,7 +102,7 @@ export class ProductsService {
       return response || null;
     } catch (error) {
       console.error('Lỗi lấy getProductById:', error);
-      return null;
+      return ;
     } 
   }
   // lấy tất cả cac dnah mục category
@@ -115,4 +115,18 @@ export class ProductsService {
       return null;
     } 
     }
-}
+    
+    // lấy catogory theo id cùng với products
+    async getCategoryByIdWithProducts(categoryId: number): Promise<Product[]> {
+      try {
+        const response = await apiClient.get<ProductByCategory>(`/categories/${categoryId}/products`);
+        const data = response?.products || [];
+         if(response?.products && Array.isArray(response.products)) {
+           return response.products;
+         }
+      } catch (error) {
+        console.error('Lỗi lấy danh mục theo ID:', error);
+      }
+      return [];
+    }
+  } 

@@ -37,7 +37,7 @@ const Index = () => {
    
      
       <KnowledgeSection />
-      <Footer />
+ 
     </div>
   );
 };

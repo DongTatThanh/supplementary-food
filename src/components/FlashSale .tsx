@@ -113,9 +113,9 @@ const FlashSale = () => {
                 brand: item.brand,
                 category: item.category,
                 // Giá từ Flash Sale
-                price: item.flash_sale.original_price,      // 850000
-                sale_price: item.flash_sale.sale_price,     // 595000
-                compare_price: null,                         // Không dùng compare_price
+                price: item.flash_sale.original_price,      
+                sale_price: item.flash_sale.sale_price,   
+                compare_price: null,                        
                 discount_percentage: item.flash_sale.discount_percent,
                 is_on_sale: 1,
                 inventory_quantity: item.flash_sale.remaining
