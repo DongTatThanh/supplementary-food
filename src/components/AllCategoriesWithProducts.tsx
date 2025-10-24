@@ -96,9 +96,11 @@ const AllCategoriesWithProducts = () => {
 
             {/* Nút xem tất cả */}
             <div className="text-center mt-8">
+            <div onClick={() => handleCategoryClick(category.id)} className="inline-block cursor-pointer">
                <button className="bg-red-600 text-white font-semibold px-8 py-2 rounded-lg hover:bg-red-700 transition-colors border-destructive">
                 Xem Thêm 
               </button>
+            </div>
             </div>
           </div>
         </section>
