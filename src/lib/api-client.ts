@@ -472,6 +472,36 @@ export interface PriceFilter{
   minPrice: number;
   maxPrice: number;
 }
+
+export interface cart{
+  id: number;
+  user_id: number;
+  session_id: string;
+  created_at: string;
+  updated_at: string;
+
+
+}
+export interface CartResponse {
+  success: boolean;
+  data: cart[];
+  message?: string;
+}
+export interface CartItem{
+  id: number;
+  cart_id: number;
+  product_id: number;
+  quantity: number;
+  price: string;
+  
+  created_at: string;
+  updated_at: string;
+}
+export interface CartItemsResponse {
+  success: boolean;
+  data: CartItem[];
+  message?: string;
+}
 export { ApiClient };
 
 

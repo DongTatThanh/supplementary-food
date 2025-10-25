@@ -65,7 +65,7 @@ const Footer = () => {
             {error && <p className="text-red-500">{error}</p>}
 
             {!loading && stores.length > 0 && (
-              // Horizontal list: use flex row with horizontal overflow on small screens
+        
               <div className="w-full flex flex-wrap">
                 <div className="flex gap-4  py-1  ">
                   {stores.map((store) => (
@@ -104,7 +104,7 @@ const Footer = () => {
       {/* Copyright */}
       <div className="bg-black/20 py-4">
         <div className="container mx-auto px-4 text-center text-sm">
-          © 2024 GYMTH. Tất cả quyền được bảo lưu.
+        GymTh
         </div>
       </div>
     </footer>

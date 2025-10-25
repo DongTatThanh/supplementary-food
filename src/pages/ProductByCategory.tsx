@@ -20,7 +20,7 @@ const ProductByCategory = () => {
   const [error, setError] = useState<string | null>(null);
   const [category, setCategory] = useState<Category | null>(null);
   const { id } = useParams<{ id: string }>();
-  // priceRange state removed: filters handled client-side using minPrice/maxPrice
+  
   const [minPrice, setMinPrice] = useState<number | null>(null);
   const [maxPrice, setMaxPrice] = useState<number | null>(null);
 

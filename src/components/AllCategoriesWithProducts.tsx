@@ -22,7 +22,7 @@ const AllCategoriesWithProducts = () => {
         // Lọc ra các danh mục có sản phẩm
         let categoriesData: Category[] = [];
         
-        // API trả về array trực tiếp
+  
         if (Array.isArray(response)) {
           categoriesData = response.filter((cat: Category) => cat.products && cat.products.length > 0);
         } else {

@@ -23,12 +23,15 @@ import {
 import { AuthService } from "@/services/auth.service";
 import { useToast } from "@/hooks/use-toast";
 import CategoryDrawer from "./CategoryDrawer";
+import { Navigate } from "react-router-dom";
+
 
 const Header = () => {
   const [user, setUser] = useState(AuthService.getCurrentUser());
   const [isAuthenticated, setIsAuthenticated] = useState(AuthService.isAuthenticated());
   const navigate = useNavigate();
   const { toast } = useToast();
+  
 
   useEffect(() => {
     // Refresh auth state khi component mount
@@ -54,6 +57,11 @@ const Header = () => {
       description: "Hẹn gặp lại bạn!",
     });
     navigate('/');
+  };
+
+  const handleCartClick = () => {
+    if (user && (user as any).id) navigate(`/cart/${(user as any).id}`);
+    else navigate('/cart');
   };
   return (
     <header className="bg-primary text-primary-foreground">
@@ -112,7 +120,7 @@ const Header = () => {
                     <User className="mr-2 h-4 w-4" />
                     <span>Thông tin cá nhân</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/orders')}>
+                  <DropdownMenuItem onClick={handleCartClick}>
                     <ShoppingCart className="mr-2 h-4 w-4" />
                     <span>Đơn hàng của tôi</span>
                   </DropdownMenuItem>
@@ -135,7 +143,7 @@ const Header = () => {
               </Button>
             )}
             
-            <Button variant="ghost" size="sm" className="text-white hover:bg-white/10 relative">
+            <Button onClick={handleCartClick} variant="ghost" size="sm" className="text-white hover:bg-white/10 relative">
               <ShoppingCart className="h-5 w-5" />
               <span className="absolute -top-2 -right-2 bg-accent text-accent-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
             </Button>

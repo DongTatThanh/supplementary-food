@@ -9,7 +9,7 @@ import Auth from "./pages/Auth";
 import ProductDetail from "./pages/ProductDetail";
 import Layout from "./components/ui/layout";
 import ProductByCategory from "./pages/ProductByCategory";
-
+import Cart from "./pages/Cart";
 
 
 
@@ -28,6 +28,8 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/category/:id" element={<ProductByCategory />} />
+          <Route path="/cart/:user_id" element={<Cart />} />
+
       
         
           <Route path="*" element={<NotFound />} />

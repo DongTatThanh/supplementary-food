@@ -112,7 +112,7 @@ const ProductCard = ({ product, soldQuantity, categoryId }: ProductCardProps) =>
           </div>
         )}
 
-        {/* Mô tả ngắn - Đã xóa */}
+      
         
       </div>
     </div>
