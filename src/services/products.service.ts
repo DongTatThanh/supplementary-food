@@ -130,3 +130,4 @@ export class ProductsService {
       return [];
     }
   } 
+export default ProductsService;

@@ -9,7 +9,7 @@ export class BannerService {
       const response = await apiClient.get<Banner>(`/banners/${id}`);
       return response;
     } catch (error) {
-      console.error('Error fetching banner by ID:', error);
+      console.error('lỗi data ID:', error);
       throw error;
     }
   }
@@ -22,7 +22,7 @@ export class BannerService {
       const response = await apiClient.get<Banner[]>('/banners');
       return response;
     } catch (error) {
-      console.error('Error fetching all banners:', error);
+      console.error('lỗi tải data:', error);
       throw error;
     }
   }
@@ -35,7 +35,7 @@ export class BannerService {
       const response = await apiClient.get<Banner[]>('/banners?is_active=1');
       return response;
     } catch (error) {
-      console.error('Error fetching active banners:', error);
+      console.error('lỗi tải data:', error);
       throw error;
     }
   }
@@ -49,7 +49,7 @@ export class BannerService {
       const response = await apiClient.get<Banner[]>(`/banners?position=${position}`);
       return response;
     } catch (error) {
-      console.error(`Error fetching banners for position ${position}:`, error);
+      console.error(`lỗi tải data cho vị trí ${position}:`, error);
       throw error;
     }
   }
@@ -63,7 +63,7 @@ export class BannerService {
       const response = await apiClient.get<Banner[]>(`/banners?position=${position}&is_active=1`);
       return response;
     } catch (error) {
-      console.error(`Error fetching active banners for position ${position}:`, error);
+      console.error(`lỗi tải data cho vị trí ${position}:`, error);
       throw error;
     }
   }
@@ -96,3 +96,4 @@ export class BannerService {
     return banners.filter(banner => this.isBannerActive(banner));
   }
 }
+export const bannerService = new BannerService();

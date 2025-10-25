@@ -11,3 +11,5 @@ export class DiscountCodeService {
       return apiClient.get<DiscountCode[]>('/discount-codes/active');
    }
 }
+
+export default DiscountCodeService;

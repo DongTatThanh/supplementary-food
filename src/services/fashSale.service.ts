@@ -7,3 +7,4 @@ export class FlashSaleService {
     return apiClient.get<FlashSaleResponse>('/flash-sales/active');
   }
 } 
+export default FlashSaleService;

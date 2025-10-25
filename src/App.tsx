@@ -28,6 +28,7 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/category/:id" element={<ProductByCategory />} />
+      
         
           <Route path="*" element={<NotFound />} />
           </Route>

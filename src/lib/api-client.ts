@@ -466,6 +466,12 @@ export interface StoresResponse {
   data: Store[];
   message?: string;
 }
+
+export interface PriceFilter{
+    label: string;
+  minPrice: number;
+  maxPrice: number;
+}
 export { ApiClient };
 
 

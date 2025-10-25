@@ -7,7 +7,7 @@ export class BrandService {
   }
 }
 
-
+export default BrandService;  
 
 
 
