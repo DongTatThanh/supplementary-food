@@ -8,10 +8,10 @@ export class CartService {
      // Lấy giỏ hàng của người dùng 
      async getUserCart(userId: number): Promise<cart[]> {
         try {
-            const response = await apiClient.get<CartResponse>(`/users/${userId}/cart`);
+            const response = await apiClient.get<CartResponse>(`/cart/user/${userId}`);
             return response.data || [];
         } catch (error) {
-            console.error('Error in getUserCart:', error);
+            console.error('lỗi tải data giỏ hàng ', error);
             return [];
         }
     }

@@ -8,9 +8,9 @@ import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription }
 
 const cartService = new CartService();
 
-const Cart: React.FC = () => {
-    const { user_id } = useParams<{ user_id: string }>();
-    const userId= user_id ? parseInt(user_id): NaN;
+const Cart: React.FC = () => {  //React Functional Component 
+    const { user_id } = useParams<{ user_id: string }>();  // lấy tham số user_id truyền từ bên header về 
+    const userId = user_id ? parseInt(user_id) : NaN;
 
     const [carts, setCarts] = useState<cart[]>([]);
     const [loading, setLoading] = useState(true);
@@ -18,22 +18,8 @@ const Cart: React.FC = () => {
 
     useEffect(() => {
         const fetchCart = async () => {
-            if (Number.isNaN(userId)) {
-                setError('Invalid user id');
-                setLoading(false);
-                return;
-            }
-
-            try {
-                setLoading(true);
-                const userCart = await cartService.getUserCart(userId);
-                setCarts(userCart || []);
-            } catch (err) {
-                console.error(err);
-                setError('Failed to fetch cart');
-            } finally {
-                setLoading(false);
-            }
+            const cart = await cartService.getUserCart(userId);
+            setCarts(cart);
         };
 
         fetchCart();
