@@ -30,7 +30,7 @@ const App = () => (
           <Route path="/category/:id" element={<ProductByCategory />} />
           <Route path="/cart/:user_id" element={<Cart />} />
 
-      
+
         
           <Route path="*" element={<NotFound />} />
           </Route>

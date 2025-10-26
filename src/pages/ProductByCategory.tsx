@@ -13,6 +13,7 @@ import Banner from '@/components/Banner';
 
 import PriceFilterproducts from '../components/PriceFilterproducts'
 import PriceRangesService from '@/services/priceRanges.service';
+import { ProductSort } from '@/components/ProductSort';
 
 const ProductByCategory = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -28,7 +29,7 @@ const ProductByCategory = () => {
 
   
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchProducts = async () => {     
       try {
         setLoading(true);
         const response = await apiClient.get<Category>(`/categories/${id}/products`);
@@ -56,7 +57,7 @@ const ProductByCategory = () => {
 
 
 
-  const handlePriceChange = (min: number | null, max: number | null) => {
+  const handlePriceChange =  (min: number | null, max: number | null) => {
     setMinPrice(min);
     setMaxPrice(max);
     // Fetch filtered products from backend
@@ -68,12 +69,26 @@ const ProductByCategory = () => {
         setProducts(products);
         setError(null);
       } catch (err) {
-        console.error('Error fetching filtered products:', err);
+        console.error('lỗi :', err);
         setError('Không thể tải sản phẩm theo filter');
       } finally {
         setLoading(false);
       }
     })();
+  };
+
+  const productsSort = async (sort: string) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const products = await priceRangesService.sortProducts(sort);
+      setProducts(products || []);
+    } catch (err) {
+      console.error('lỗi :', err);
+      setError('Không thể tải sản phẩm theo sắp xếp');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -107,21 +122,7 @@ const ProductByCategory = () => {
               <div className="flex items-center gap-4 flex-wrap">
                 <span className="text-sm font-semibold text-gray-700">Sắp xếp:</span>
                 <div className="flex gap-2 flex-wrap">
-                  <button className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 hover:border-gray-400 transition-colors">
-                    Tên A → Z
-                  </button>
-                  <button className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 hover:border-gray-400 transition-colors">
-                    Tên Z → A
-                  </button>
-                  <button className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 hover:border-gray-400 transition-colors">
-                    Giá tăng dần
-                  </button>
-                  <button className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 hover:border-gray-400 transition-colors">
-                    Giá giảm dần
-                  </button>
-                  <button className="px-4 py-2 text-sm border-2 border-blue-500 bg-blue-50 text-blue-600 rounded-md font-medium">
-                    Hàng mới
-                  </button>
+                  <ProductSort onSortChange={productsSort} />
                 </div>
               </div>
             </div>
@@ -136,7 +137,9 @@ const ProductByCategory = () => {
         </div>
       </div>
     </div>
-  );
+  )
 };
 
+
 export default ProductByCategory;
+      

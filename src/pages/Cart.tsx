@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 
 import { cart } from '@/lib/api-client';
 import { CartService } from '@/services/cart.service';
@@ -18,8 +18,23 @@ const Cart: React.FC = () => {  //React Functional Component
 
     useEffect(() => {
         const fetchCart = async () => {
-            const cart = await cartService.getUserCart(userId);
-            setCarts(cart);
+            if (Number.isNaN(userId)) {
+                setError('Invalid user id');
+                setLoading(false);
+                return;
+            }
+
+            try {
+                setLoading(true);
+                setError(null);
+                const cart = await cartService.getUserCart(userId);
+                setCarts(cart || []);
+            } catch (err) {
+                console.error(err);
+                setError('Failed to fetch cart');
+            } finally {
+                setLoading(false);
+            }
         };
 
         fetchCart();
