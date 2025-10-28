@@ -10,7 +10,6 @@ import Banner from '@/components/Banner';
 
 
 
-
 import PriceFilterproducts from '../components/PriceFilterproducts'
 import PriceRangesService from '@/services/priceRanges.service';
 import { ProductSort } from '@/components/ProductSort';
@@ -24,6 +23,7 @@ const ProductByCategory = () => {
   
   const [minPrice, setMinPrice] = useState<number | null>(null);
   const [maxPrice, setMaxPrice] = useState<number | null>(null);
+  const [sort, setSort] = useState<string | null>(null);
 
   const priceRangesService = new PriceRangesService();
 
@@ -65,7 +65,7 @@ const ProductByCategory = () => {
     (async () => {
       try {
         setLoading(true);
-        const products = await priceRangesService.getProductsByCategory(id, min ?? undefined, max ?? undefined);
+        const products = await priceRangesService.getProductsByCategory(id, min ?? undefined, max ?? undefined, sort ?? undefined);
         setProducts(products);
         setError(null);
       } catch (err) {
@@ -77,11 +77,18 @@ const ProductByCategory = () => {
     })();
   };
 
-  const productsSort = async (sort: string) => {
+  const productsSort = async (sortParam: string) => {
+    if (!id) return;
+    setSort(sortParam);
     try {
       setLoading(true);
       setError(null);
-      const products = await priceRangesService.sortProducts(sort);
+      const products = await priceRangesService.getProductsByCategory(
+        id,
+        minPrice ?? undefined,
+        maxPrice ?? undefined,
+        sortParam,
+      );
       setProducts(products || []);
     } catch (err) {
       console.error('lỗi :', err);
@@ -98,7 +105,7 @@ const ProductByCategory = () => {
           Sản phẩm: {category?.name || 'Danh mục không xác định'}
         </h2>
 
-        <div className='mb-8'>
+        <div className="mb-8">
           <Banner />
         </div>
 
@@ -111,9 +118,8 @@ const ProductByCategory = () => {
               <aside className="col-span-1 bg-white p-4 rounded-lg shadow">
                 <PriceFilterproducts onChange={handlePriceChange} />
               </aside>
-
             </div>
-        </div>
+          </div>
 
           {/* Main Content */}
           <div className="flex-1">
@@ -122,7 +128,7 @@ const ProductByCategory = () => {
               <div className="flex items-center gap-4 flex-wrap">
                 <span className="text-sm font-semibold text-gray-700">Sắp xếp:</span>
                 <div className="flex gap-2 flex-wrap">
-                  <ProductSort onSortChange={productsSort} />
+                  <ProductSort onChange={productsSort} />
                 </div>
               </div>
             </div>
@@ -137,9 +143,8 @@ const ProductByCategory = () => {
         </div>
       </div>
     </div>
-  )
+  );
 };
-
 
 export default ProductByCategory;
       

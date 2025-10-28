@@ -186,16 +186,8 @@ const ProductDetail = () => {
                   </>
                 )}
               </div>
-              {!!product.is_on_sale && comparePrice && comparePrice > price && (
-                <div className="flex items-center gap-2 text-orange-600">
-                  <Award className="w-5 h-5" />
-                  <span className="font-semibold">
-                    +{((comparePrice - price) / 10000).toFixed(1)} điểm tích luỹ thành viên
-                  </span>
-                </div>
-              )}
-            </div>
-
+              
+         
             {/* Component: Product Variant Selector */}
             {product.variants && product.variants.length > 0 && (
               <ProductVariantSelector
@@ -205,7 +197,7 @@ const ProductDetail = () => {
               />
             )}
 
-            {/* Component: Discount Code List */}
+            {/* Component: Discount Code List 
             {discountCodes.length > 0 && (
               <DiscountCodeList
                 discountCodes={discountCodes}
@@ -213,6 +205,7 @@ const ProductDetail = () => {
                 onCopyCode={handleCopyCode}
               />
             )}
+            *}
 
             {/* Số lượng */}
             <div className="mb-6">
@@ -258,7 +251,7 @@ const ProductDetail = () => {
               <p className="text-sm text-gray-600 mb-1">Gọi đặt mua:</p>
               <a href="tel:0919013030" className="text-2xl font-bold text-red-600 hover:underline flex items-center justify-center gap-2">
                 <Phone className="w-6 h-6" />
-                091.901.3030
+                0972068334
               </a>
               <p className="text-xs text-gray-500 flex items-center justify-center gap-1 mt-1">
                 <Clock className="w-4 h-4" />
@@ -296,7 +289,13 @@ const ProductDetail = () => {
         <ProductTabs product={product} selectedVariant={selectedVariant} />
       </div>
     </div>
+    </div>
+    
+
   );
+
 };
+
+
 
 export default ProductDetail;
