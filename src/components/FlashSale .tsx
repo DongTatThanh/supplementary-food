@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import { FlashSaleService } from "@/services/fashSale.service";
 import { FlashSaleResponse, FlashSaleInfo, FlashSaleProduct } from "@/lib/api-client";
 import ProductCard from "@/components/ui/ProductCard";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+
 
 const flashSaleService = new FlashSaleService();
 
@@ -10,7 +13,12 @@ const FlashSale = () => {
   const [flashSale, setFlashSale] = useState<FlashSaleInfo | null>(null);
   const [products, setProducts] = useState<FlashSaleProduct[]>([]);
   const [loading, setLoading] = useState(true);
+  
+const navigate = useNavigate();
   const [timeRemaining, setTimeRemaining] = useState({
+    
+
+    
     days: 0,
     hours: 0,
     minutes: 0,
@@ -72,6 +80,10 @@ const FlashSale = () => {
 
   if (!flashSale) return null;
 
+  const handleFlashSaleClick = () => {
+    navigate('/FlashSale');
+  };
+
   return (
     <section className="py-8">
       <div className="container mx-auto px-4">
@@ -112,7 +124,7 @@ const FlashSale = () => {
                 image_url: item.featured_image,
                 brand: item.brand,
                 category: item.category,
-                // Giá từ Flash Sale
+            
                 price: item.flash_sale.original_price,      
                 sale_price: item.flash_sale.sale_price,   
                 compare_price: null,                        
@@ -130,11 +142,31 @@ const FlashSale = () => {
               );
             })}
           </div>
+         
         </div>
       )}
     </div>
+
+   <div className="text-center mt-6">
+      <Button 
+        variant="xemthem" 
+        size="lg" 
+        onClick={handleFlashSaleClick}
+      >
+        Xem Thêm
+      </Button>
+    </div>
+    
+
+
+   
   </section>
-);
+  );
+  
+
 };
+
+
+
 
 export default FlashSale;

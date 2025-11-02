@@ -26,7 +26,7 @@ const ProductCard = ({ product, soldQuantity, categoryId }: ProductCardProps) =>
     (priceToCompare > displayPrice ? Math.round((1 - displayPrice / priceToCompare) * 100) : 0);
   
   // Get inventory quantity - API returns inventory_quantity
-  const quantity = product.inventory_quantity || product.stock_quantity || 0;
+  const quantity = product.inventory_quantity || product.stock_quantity ;
   const hasStock = quantity > 0;
   
   // Navigate to product detail page
@@ -42,16 +42,16 @@ const ProductCard = ({ product, soldQuantity, categoryId }: ProductCardProps) =>
       className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-md  transition-all duration-300 cursor-pointer hover:shadow-xl hover:-translate-y-1"
     >
       {/* Badge khuyến mại */}
-      {product.is_on_sale && discount > 0 && (
+      {product.is_on_sale==1 && discount > 0 ? (
         <div className="relative">
 
 
          
 <div className="absolute top-2 right-2 bg-red-600 text-white text-sm font-bold px-3 py-1.5 rounded-full shadow-md z-10">
-            <span className="text-sm font-bold">-{discount}%</span>
+            <span className="text-sm font-bold">-{discount}%</span> 
           </div>
         </div>
-      )}
+      ): null}
 
       {/* Hình ảnh sản phẩm */}
       <div className="relative h-64 bg-white p-0.5  hover:caption_dropdowns  hover:shadow-xl hover:-translate-y-2" >

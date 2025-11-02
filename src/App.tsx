@@ -10,6 +10,7 @@ import ProductDetail from "./pages/ProductDetail";
 import Layout from "./components/ui/layout";
 import ProductByCategory from "./pages/ProductByCategory";
 import Cart from "./pages/Cart";
+import FlashSalePage from "./pages/FlashSale";
 
 
 
@@ -29,6 +30,7 @@ const App = () => (
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/category/:id" element={<ProductByCategory />} />
           <Route path="/cart/:user_id" element={<Cart />} />
+          <Route path="/FlashSale" element={<FlashSalePage />} />
 
 
         

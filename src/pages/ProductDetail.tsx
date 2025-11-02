@@ -7,8 +7,7 @@ import {
 import { ProductDetailData, ProductVariant, DiscountCode, getImageUrl } from '../lib/api-client';
 import { ProductsService } from '@/services/products.service';
 import { DiscountCodeService } from '@/services/discountCode.service';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+
 
 // Import các component con
 import { ProductImageGallery } from '@/components/ProductDetail/ProductImageGallery';
