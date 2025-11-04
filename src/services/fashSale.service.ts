@@ -1,46 +1,57 @@
 
-import { apiClient } from '../lib/api-client';
-import { FlashSaleResponse } from '../lib/api-client';
+import { apiClient, FlashSaleResponse } from '@/lib/api-client';
+import { error } from 'console';
 
 export class FlashSaleService {
+  // Lấy Flash Sale đang active với filters
   async getActiveFlashSale(
     minPrice?: number,
     maxPrice?: number,
     brandId?: number,
-    sort?: string
+    sort?: string,
+    page?: number,
+    limit?: number
   ): Promise<FlashSaleResponse> {
-    // Build query params
-    const params = new URLSearchParams();
-    
-    // Backend expects: priceMin, priceMax, brandId (lowercase)
-    if (minPrice !== undefined) {
-      params.append('minPrice', minPrice.toString());
-    }
-    if (maxPrice !== undefined) {
-      params.append('maxPrice', maxPrice.toString());
-    }
-    if (brandId !== undefined) {
-      params.append('brandId', brandId.toString());
-    }
-    if (sort) {
-      // Map UI sort keys to backend format
+    try {
+      let endpoint = `/flash-sales/active`;
+      const params: string[] = [];
+      
+      // Backend expects: priceMin, priceMax, brandId (lowercase)
+      if (minPrice != null) params.push(`priceMin=${encodeURIComponent(String(minPrice))}`);
+      if (maxPrice != null) params.push(`priceMax=${encodeURIComponent(String(maxPrice))}`);
+      if (brandId != null) params.push(`brandId=${encodeURIComponent(String(brandId))}`);
+     
       const sortMap: Record<string, string> = {
-        'priceAsc': 'price_asc',
-        'priceDesc': 'price_desc',
-        'nameAsc': 'name_asc',
-        'nameDesc': 'name_desc',
+        priceAsc: 'price_asc',
+        priceDesc: 'price_desc',
+        nameAsc: 'name_asc',
+        nameDesc: 'name_desc',
       };
-      const backendSort = sortMap[sort] || sort;
-      params.append('sort', backendSort);
-    }
+      if (sort) params.push(`sort=${encodeURIComponent(sortMap[sort] ?? sort)}`);
 
-    const queryString = params.toString();
-    const url = queryString ? `/flash-sales/active?${queryString}` : '/flash-sales/active';
-    
-    console.log('🔍 Flash Sale API Call:', url); // Debug log
-    
-    return apiClient.get<FlashSaleResponse>(url);
+      if (page != null) params.push(`page=${encodeURIComponent(String(page))}`);
+      if (limit != null) params.push(`limit=${encodeURIComponent(String(limit))}`);
+
+      // Append query params to endpoint
+      if (params.length) endpoint += `?${params.join('&')}`;
+
+      const response = await apiClient.get<FlashSaleResponse>(endpoint);
+      return response;
+    } catch 
+     {
+      
+      // Return empty FlashSaleResponse structure
+      return {
+        success: false,
+        data: null,
+        message: 'Lỗi tải dữ liệu Flash Sale'
+      };
+    }
   }
-} 
+}
+
 export default FlashSaleService;
+
+
+
 

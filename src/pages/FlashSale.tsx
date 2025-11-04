@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { FlashSaleService } from "@/services/fashSale.service";
+import FlashSaleService from "@/services/fashSale.service"
 import { FlashSaleResponse, FlashSaleInfo, FlashSaleProduct } from "@/lib/api-client";
 import ProductCard from "@/components/ui/ProductCard";
 import Banner from "@/components/Banner";
@@ -27,39 +27,34 @@ const FlashSalePage = () => {
     seconds: 0,
   });
 
-  // Fetch Flash Sale data
-  const fetchFlashSale = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const result: FlashSaleResponse = await flashSaleService.getActiveFlashSale(
-        minPrice ?? undefined,
-        maxPrice ?? undefined,
-        brandId ?? undefined,
-        sort ?? undefined
-      );
-
-      if (result.success && result.data?.flashSale) {
-        setFlashSale(result.data.flashSale);
-        setTimeRemaining(result.data.flashSale.time_remaining);
-
-        const validProducts = (result.data.products || []).filter(
-          (item: FlashSaleProduct) => item && item.flash_sale
-        );
-
-        setProducts(validProducts);
-      }
-    } catch (err) {
-      console.error("Lỗi tải Flash Sale:", err);
-      setError("Không thể tải sản phẩm Flash Sale");
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // Load initial data khi component mount
   useEffect(() => {
-    fetchFlashSale();
-  }, [minPrice, maxPrice, brandId, sort]);
+    const loadInitialData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const result: FlashSaleResponse = await flashSaleService.getActiveFlashSale();
+
+        if (result.success && result.data?.flashSale) {
+          setFlashSale(result.data.flashSale);
+          setTimeRemaining(result.data.flashSale.time_remaining);
+
+          const validProducts = (result.data.products || []).filter(
+            (item: FlashSaleProduct) => item && item.flash_sale
+          );
+
+          setProducts(validProducts);
+        }
+      } catch (err) {
+        console.error("Lỗi tải Flash Sale:", err);
+        setError("Không thể tải sản phẩm Flash Sale");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadInitialData();
+  }, []);
 
   // Countdown timer
   useEffect(() => {
@@ -86,14 +81,98 @@ const FlashSalePage = () => {
   const handlePriceChange = (min: number | null, max: number | null) => {
     setMinPrice(min);
     setMaxPrice(max);
+    // Fetch filtered products from backend (giống ProductByCategory)
+    (async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const result: FlashSaleResponse = await flashSaleService.getActiveFlashSale(
+          min ?? undefined,
+          max ?? undefined,
+          brandId ?? undefined,
+          sort ?? undefined
+        );
+
+        if (result.success && result.data?.flashSale) {
+          setFlashSale(result.data.flashSale);
+          setTimeRemaining(result.data.flashSale.time_remaining);
+
+          const validProducts = (result.data.products || []).filter(
+            (item: FlashSaleProduct) => item && item.flash_sale
+          );
+
+          setProducts(validProducts);
+        }
+      } catch (err) {
+        console.error("Lỗi tải Flash Sale:", err);
+        setError("Không thể tải sản phẩm Flash Sale");
+      } finally {
+        setLoading(false);
+      }
+    })();
   };
 
   const handleBrandChange = (brand: number | null) => {
     setBrandId(brand);
+    // Fetch filtered products from backend (giống ProductByCategory)
+    (async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const result: FlashSaleResponse = await flashSaleService.getActiveFlashSale(
+          minPrice ?? undefined,
+          maxPrice ?? undefined,
+          brand ?? undefined,
+          sort ?? undefined
+        );
+
+        if (result.success && result.data?.flashSale) {
+          setFlashSale(result.data.flashSale);
+          setTimeRemaining(result.data.flashSale.time_remaining);
+
+          const validProducts = (result.data.products || []).filter(
+            (item: FlashSaleProduct) => item && item.flash_sale
+          );
+
+          setProducts(validProducts);
+        }
+      } catch (err) {
+        console.error("Lỗi tải Flash Sale:", err);
+        setError("Không thể tải sản phẩm Flash Sale");
+      } finally {
+        setLoading(false);
+      }
+    })();
   };
 
-  const handleSortChange = (sortParam: string) => {
+  const handleSortChange = async (sortParam: string) => {
     setSort(sortParam);
+    try {
+      setLoading(true);
+      setError(null);
+      const result: FlashSaleResponse = await flashSaleService.getActiveFlashSale(
+        minPrice ?? undefined,
+        maxPrice ?? undefined,
+        brandId ?? undefined,
+        sortParam
+      );
+
+      if (result.success && result.data?.flashSale) {
+        setFlashSale(result.data.flashSale);
+        setTimeRemaining(result.data.flashSale.time_remaining);
+
+        const validProducts = (result.data.products || []).filter(
+          (item: FlashSaleProduct) => item && item.flash_sale
+        );
+
+        setProducts(validProducts || []);
+      }
+    } catch (err) {
+      console.error("Lỗi tải Flash Sale:", err);
+      setError("Không thể tải sản phẩm Flash Sale");
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!flashSale) return null;
