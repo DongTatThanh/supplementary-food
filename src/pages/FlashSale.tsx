@@ -5,6 +5,7 @@ import { FlashSaleResponse, FlashSaleInfo, FlashSaleProduct } from "@/lib/api-cl
 import ProductCard from "@/components/ui/ProductCard";
 import Banner from "@/components/Banner";
 import PriceFilterproducts from "@/components/PriceFilterproducts";
+import BrandFilter from "@/components/BrandFilter";
 import { ProductSort } from "@/components/ProductSort";
 
 const flashSaleService = new FlashSaleService();
@@ -16,6 +17,7 @@ const FlashSalePage = () => {
   const [error, setError] = useState<string | null>(null);
   const [minPrice, setMinPrice] = useState<number | null>(null);
   const [maxPrice, setMaxPrice] = useState<number | null>(null);
+  const [brandId, setBrandId] = useState<number | null>(null);
   const [sort, setSort] = useState<string | null>(null);
 
   const [timeRemaining, setTimeRemaining] = useState({
@@ -33,6 +35,7 @@ const FlashSalePage = () => {
       const result: FlashSaleResponse = await flashSaleService.getActiveFlashSale(
         minPrice ?? undefined,
         maxPrice ?? undefined,
+        brandId ?? undefined,
         sort ?? undefined
       );
 
@@ -56,7 +59,7 @@ const FlashSalePage = () => {
 
   useEffect(() => {
     fetchFlashSale();
-  }, [minPrice, maxPrice, sort]);
+  }, [minPrice, maxPrice, brandId, sort]);
 
   // Countdown timer
   useEffect(() => {
@@ -83,6 +86,10 @@ const FlashSalePage = () => {
   const handlePriceChange = (min: number | null, max: number | null) => {
     setMinPrice(min);
     setMaxPrice(max);
+  };
+
+  const handleBrandChange = (brand: number | null) => {
+    setBrandId(brand);
   };
 
   const handleSortChange = (sortParam: string) => {
@@ -123,11 +130,18 @@ const FlashSalePage = () => {
         <div className="flex gap-6">
           {/* Sidebar Filters */}
           <div className="w-64 flex-shrink-0">
-            <div className="bg-white rounded-lg p-4 sticky top-4">
-              <h3 className="text-lg font-semibold mb-4">Giá</h3>
-              <aside className="col-span-1 bg-white p-4 rounded-lg shadow">
+            <div className="bg-white rounded-lg p-4 sticky top-4 space-y-6">
+              {/* Brand Filter */}
+              <div>
+                <h3 className="text-lg font-semibold mb-4">Hãng sản xuất</h3>
+                <BrandFilter onChange={handleBrandChange} />
+              </div>
+
+              {/* Price Filter */}
+              <div>
+                <h3 className="text-lg font-semibold mb-4">Giá</h3>
                 <PriceFilterproducts onChange={handlePriceChange} />
-              </aside>
+              </div>
             </div>
           </div>
 

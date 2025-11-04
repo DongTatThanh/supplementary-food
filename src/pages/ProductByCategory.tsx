@@ -5,12 +5,8 @@ import { Category } from '../lib/api-client';
 import { useParams } from 'react-router-dom';
 import { Ban } from 'lucide-react';
 import Banner from '@/components/Banner';
-
-
-
-
-
-import PriceFilterproducts from '../components/PriceFilterproducts'
+import PriceFilterproducts from '../components/PriceFilterproducts';
+import BrandFilter from '../components/BrandFilter';
 import PriceRangesService from '@/services/priceRanges.service';
 import { ProductSort } from '@/components/ProductSort';
 
@@ -23,6 +19,7 @@ const ProductByCategory = () => {
   
   const [minPrice, setMinPrice] = useState<number | null>(null);
   const [maxPrice, setMaxPrice] = useState<number | null>(null);
+  const [brandId, setBrandId] = useState<number | null>(null);
   const [sort, setSort] = useState<string | null>(null);
 
   const priceRangesService = new PriceRangesService();
@@ -65,7 +62,13 @@ const ProductByCategory = () => {
     (async () => {
       try {
         setLoading(true);
-        const products = await priceRangesService.getProductsByCategory(id, min ?? undefined, max ?? undefined, sort ?? undefined);
+        const products = await priceRangesService.getProductsByCategory(
+          id, 
+          min ?? undefined, 
+          max ?? undefined, 
+          brandId ?? undefined,
+          sort ?? undefined
+        );
         setProducts(products);
         setError(null);
       } catch (err) {
@@ -87,6 +90,7 @@ const ProductByCategory = () => {
         id,
         minPrice ?? undefined,
         maxPrice ?? undefined,
+        brandId ?? undefined,
         sortParam,
       );
       setProducts(products || []);
@@ -96,6 +100,31 @@ const ProductByCategory = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleBrandChange = (brand: number | null) => {
+    setBrandId(brand);
+    // Fetch filtered products from backend
+    if (!id) return;
+    (async () => {
+      try {
+        setLoading(true);
+        const products = await priceRangesService.getProductsByCategory(
+          id,
+          minPrice ?? undefined,
+          maxPrice ?? undefined,
+          brand ?? undefined,
+          sort ?? undefined
+        );
+        setProducts(products);
+        setError(null);
+      } catch (err) {
+        console.error('lỗi :', err);
+        setError('Không thể tải sản phẩm theo brand');
+      } finally {
+        setLoading(false);
+      }
+    })();
   };
 
   return (
@@ -118,6 +147,13 @@ const ProductByCategory = () => {
               <aside className="col-span-1 bg-white p-4 rounded-lg shadow">
                 <PriceFilterproducts onChange={handlePriceChange} />
               </aside>
+              <div className="mt-6">
+                <h3 className="text-lg font-semibold mb-4">Hãng sản xuất</h3>
+                <aside className="col-span-1 bg-white p-4 rounded-lg shadow">
+                  <BrandFilter onChange={handleBrandChange} />
+                </aside>
+              </div>
+
             </div>
           </div>
 
