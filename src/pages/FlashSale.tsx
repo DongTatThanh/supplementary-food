@@ -28,9 +28,11 @@ const FlashSalePage = () => {
   });
 
   // Load initial data khi component mount
-  useEffect(() => {
+  useEffect(() => 
+    {
     const loadInitialData = async () => {
-      try {
+      try 
+      {
         setLoading(true);
         setError(null);
         const result: FlashSaleResponse = await flashSaleService.getActiveFlashSale();
@@ -45,7 +47,8 @@ const FlashSalePage = () => {
 
           setProducts(validProducts);
         }
-      } catch (err) {
+      } catch (err) 
+      {
         console.error("Lỗi tải Flash Sale:", err);
         setError("Không thể tải sản phẩm Flash Sale");
       } finally {
@@ -60,7 +63,8 @@ const FlashSalePage = () => {
   useEffect(() => {
     if (!flashSale) return;
 
-    const timer = setInterval(() => {
+    const timer = setInterval(() => 
+      {
       setTimeRemaining((prev) => {
         if (prev.seconds > 0) {
           return { ...prev, seconds: prev.seconds - 1 };
@@ -78,10 +82,11 @@ const FlashSalePage = () => {
     return () => clearInterval(timer);
   }, [flashSale]);
 
-  const handlePriceChange = (min: number | null, max: number | null) => {
+  const handlePriceChange = (min: number | null, max: number | null) => 
+    {
     setMinPrice(min);
     setMaxPrice(max);
-    // Fetch filtered products from backend (giống ProductByCategory)
+   
     (async () => {
       try {
         setLoading(true);
@@ -241,7 +246,7 @@ const FlashSalePage = () => {
               </div>
             </div>
 
-            {/* Products Grid */}
+           
             {loading ? (
               <div className="text-center py-12">
                 <p className="text-gray-600">Đang tải sản phẩm...</p>
