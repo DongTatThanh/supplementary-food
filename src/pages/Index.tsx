@@ -36,8 +36,8 @@ const Index = () => {
       <CategorySection />
    
      
-      <KnowledgeSection />
- 
+      {/* <KnowledgeSection />
+  */}
     </div>
   );
 };

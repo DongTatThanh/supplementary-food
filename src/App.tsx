@@ -11,6 +11,8 @@ import Layout from "./components/ui/layout";
 import ProductByCategory from "./pages/ProductByCategory";
 import Cart from "./pages/Cart";
 import FlashSalePage from "./pages/FlashSale";
+import ToolTTDE from "./pages/ToolTTDE";
+import ToolBMI from "./pages/ToolBMI";
 
 
 
@@ -31,7 +33,8 @@ const App = () => (
           <Route path="/category/:id" element={<ProductByCategory />} />
           <Route path="/cart/:user_id" element={<Cart />} />
           <Route path="/FlashSale" element={<FlashSalePage />} />
-
+          <Route path="/ToolTTDE" element={<ToolTTDE />} />
+          <Route path="/ToolBMI" element={<ToolBMI />} />
 
         
           <Route path="*" element={<NotFound />} />

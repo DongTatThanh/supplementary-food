@@ -4,6 +4,7 @@ import { Search, ShoppingCart, User, Menu, ChevronDown, LogOut } from "lucide-re
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -63,6 +64,15 @@ const Header = () => {
     if (user && (user as any).id) navigate(`/cart/${(user as any).id}`);
     else navigate('/cart');
   };
+
+  const handleToolTTDEClick = () => {
+    navigate('/ToolTTDE');
+  };
+
+  const handleToolBMIClick = () => {
+    navigate('/ToolBMI');
+  };
+
   return (
     <header className="bg-primary text-primary-foreground">
       {/* Top banner */}
@@ -168,13 +178,16 @@ const Header = () => {
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <div className="grid w-[400px] grid-cols-1 gap-3 p-4">
-                      <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
-                        <div className="text-sm font-medium leading-none">Công Cụ Tính TDEE OnlinE</div>
-                        
-                       
+                      
+                      <NavigationMenuLink asChild>
+                        <div onClick={handleToolTTDEClick} className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground cursor-pointer">
+                          <div className="text-sm font-medium leading-none">Công Cụ Tính TDEE OnlinE</div>
+                        </div>
                       </NavigationMenuLink>
-                      <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
-                        <div className="text-sm font-medium leading-none">Công Cụ Tính BMI Online</div>
+                      <NavigationMenuLink asChild>
+                        <div onClick={handleToolBMIClick} className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground cursor-pointer">
+                          <div className="text-sm font-medium leading-none">Công Cụ Tính BMI Online</div>
+                        </div>
                       </NavigationMenuLink>
                     </div>
                   </NavigationMenuContent>
@@ -188,7 +201,7 @@ const Header = () => {
                   <NavigationMenuContent>
                     <div className="grid w-[400px] grid-cols-1 gap-3 p-4">
                       <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
-                        <div className="text-sm font-medium leading-none">Kiến Thức Dinh Dưỡng</div>
+                        <div  className="text-sm font-medium leading-none">Kiến Thức Dinh Dưỡng</div>
 
                       </NavigationMenuLink>
                       <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">

@@ -39,11 +39,7 @@ export class PriceRangesService {
             const response = await apiClient.get<any>(endpoint);
 
          
-            if (Array.isArray(response)) return response as Product[];
-            if (response?.products && Array.isArray(response.products)) return response.products as Product[];
-            if (response?.data && Array.isArray(response.data)) return response.data as Product[];
-            if (response?.data?.data && Array.isArray(response.data.data)) return response.data.data as Product[];
-
+          
             return [];
         } catch (error) {
             console.error('lỗi tải data:', error);
