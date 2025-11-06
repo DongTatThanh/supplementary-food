@@ -184,6 +184,7 @@ const ToolBMI = () => {
           <li>• Giảm nguy cơ mắc các bệnh mãn tính như bệnh tim, ung thư.</li>
         </ul>
       </div>
+      </div>
     </div>
   );
 };

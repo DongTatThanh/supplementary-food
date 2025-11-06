@@ -37,10 +37,8 @@ export class PriceRangesService {
             if (params.length) endpoint += `?${params.join('&')}`;
 
             const response = await apiClient.get<any>(endpoint);
-
-         
-          
-            return [];
+            
+            return response.data || [];
         } catch (error) {
             console.error('lỗi tải data:', error);
             return [];
