@@ -1,4 +1,28 @@
-import { apiClient, CartResponse, cart } from "@/lib/api-client";
+import { apiClient, Brand, Product } from "@/lib/api-client";
+
+// Types matching backend API response
+export interface CartProduct extends Product {
+    brand: Brand;
+}
+
+export interface CartItem {
+    id: number;
+    cart_id: number;
+    product: CartProduct;
+    quantity: number;
+    price: string;
+    added_at: string;
+    updated_at: string;
+}
+
+export interface Cart {
+    id: number;
+    user_id: number;
+    session_id: string | null;
+    created_at: string;
+    updated_at: string;
+    items: CartItem[];
+}
 
 interface AddToCartPayload {
     product_id: number;
@@ -15,13 +39,19 @@ interface AddToCartResponse {
 export class CartService {
 
     // Lấy giỏ hàng của người dùng 
-    async getUserCart(userId: number): Promise<cart[]> {
+    async getUserCart(): Promise<Cart | null> {
         try {
-            const response = await apiClient.get<CartResponse>(`/cart/user/${userId}`);
-            return response.data || [];
+            // Backend returns array with single cart object
+            const response = await apiClient.get<Cart[]>('/cart');
+            
+            if (response && Array.isArray(response) && response.length > 0) {
+                return response[0];
+            }
+            
+            return null;
         } catch (error) {
             console.error('lỗi tải data giỏ hàng ', error);
-            return [];
+            return null;
         }
     }
 
@@ -56,7 +86,8 @@ export class CartService {
     // Cập nhật số lượng sản phẩm trong giỏ hàng
     async updateCartItem(itemId: number, quantity: number): Promise<{ success: boolean; message: string }> {
         try {
-            await apiClient.put(`/cart/items/${itemId}`, { quantity });
+            // Backend uses POST for update, not PUT
+            await apiClient.post(`/cart/items/${itemId}`, { quantity });
             return {
                 success: true,
                 message: 'Đã cập nhật số lượng'
