@@ -1,6 +1,9 @@
 import { Product, getImageUrl } from '@/lib/api-client';
 import { ShoppingCart, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { CartService } from '@/services/cart.service';
+import { useToast } from '@/hooks/use-toast';
 
 interface ProductCardProps {
   product: Product;
@@ -10,6 +13,9 @@ interface ProductCardProps {
 
 const ProductCard = ({ product, soldQuantity, categoryId }: ProductCardProps) => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const cartService = new CartService();
   
   // Giá hiện tại để hiển thị (ưu tiên sale_price nếu có)
   const displayPrice = product.sale_price ? Number(product.sale_price) : Number(product.price);
@@ -32,6 +38,46 @@ const ProductCard = ({ product, soldQuantity, categoryId }: ProductCardProps) =>
   // Navigate to product detail page
   const handleProductClick = () => {
     navigate(`/product/${product.id}`);
+  };
+
+  // Handle thêm vào giỏ hàng
+  const handleAddToCart = async (e: React.MouseEvent) => {
+    e.stopPropagation(); // Ngăn không cho navigate khi click vào button
+
+    if (!hasStock) {
+      toast({
+        title: "Hết hàng",
+        description: "Sản phẩm này hiện đã hết hàng",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsAddingToCart(true);
+    try {
+      const response = await cartService.addToCart(product.id, 1);
+
+      if (response.success) {
+        toast({
+          title: "Thành công!",
+          description: `Đã thêm "${product.name}" vào giỏ hàng`,
+        });
+      } else {
+        toast({
+          title: "Lỗi",
+          description: response.message,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Lỗi",
+        description: "Không thể thêm vào giỏ hàng. Vui lòng thử lại!",
+        variant: "destructive",
+      });
+    } finally {
+      setIsAddingToCart(false);
+    }
   };
 
 
@@ -112,7 +158,23 @@ const ProductCard = ({ product, soldQuantity, categoryId }: ProductCardProps) =>
           </div>
         )}
 
-      
+        {/* Nút thêm vào giỏ hàng */}
+        <button
+          onClick={handleAddToCart}
+          disabled={!hasStock || isAddingToCart}
+          className={`w-full flex items-center justify-center gap-2 py-2 px-4 rounded-md font-semibold transition-colors ${
+            !hasStock
+              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              : isAddingToCart
+              ? 'bg-red-400 text-white cursor-wait'
+              : 'bg-red-600 text-white hover:bg-red-700'
+          }`}
+        >
+          <ShoppingCart className="h-4 w-4" />
+          <span>
+            {!hasStock ? 'Hết hàng' : isAddingToCart ? 'Đang thêm...' : 'Thêm vào giỏ'}
+          </span>
+        </button>
         
       </div>
     </div>
