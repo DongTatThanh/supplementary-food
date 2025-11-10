@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getImageUrl, DiscountCode } from '@/lib/api-client';
 import { ArrowLeft, Tag, X } from 'lucide-react';
 import DiscountCodeService from '@/services/discountCode.service';
+import AddressSelect from '@/components/address/AddressSelect';
 
 const Checkout = () => {
     const navigate = useNavigate();
@@ -308,26 +309,12 @@ const Checkout = () => {
                                     required
                                 />
 
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <Input
-                                        placeholder="Tỉnh/Thành phố *"
-                                        value={formData.shipping_city}
-                                        onChange={(e) => setFormData({...formData, shipping_city: e.target.value})}
-                                        required
-                                    />
-                                    <Input
-                                        placeholder="Quận/Huyện *"
-                                        value={formData.shipping_district}
-                                        onChange={(e) => setFormData({...formData, shipping_district: e.target.value})}
-                                        required
-                                    />
-                                    <Input
-                                        placeholder="Phường/Xã *"
-                                        value={formData.shipping_ward}
-                                        onChange={(e) => setFormData({...formData, shipping_ward: e.target.value})}
-                                        required
-                                    />
-                                </div>
+                                {/* Component chọn địa chỉ */}
+                                <AddressSelect
+                                    onProvinceChange={(name) => setFormData({...formData, shipping_city: name})}
+                                    onDistrictChange={(name) => setFormData({...formData, shipping_district: name})}
+                                    onWardChange={(name) => setFormData({...formData, shipping_ward: name})}
+                                />
 
                                 <Textarea
                                     placeholder="Ghi chú đơn hàng (tùy chọn)"
