@@ -189,7 +189,7 @@ const CartPage: React.FC = () => {
                         <CardFooter className="flex flex-col gap-2">
                             <Button 
                                 className="w-full bg-red-600 hover:bg-red-700"
-                                onClick={() => navigate('/payment')}
+                                onClick={() => navigate('/checkout')}
                             >
                                 Tiến hành thanh toán
                             </Button>

@@ -519,17 +519,25 @@ export interface OrderItem {
     subtotal: string;
 }
 export interface PaymentInfo {
-  qr_code : string ;
-  account_number : string ;
-  account_name : string ;
-  amount : string ;
-  content:string ;
-  bank_name?: string ;
+  orderId: number;
+  orderNumber: string;
+  bankInfo: {
+    accountNumber: string;
+    accountName: string;
+    bankCode: string;
+    bankName: string;
+  };
+  amount: number;
+  content: string;
+  qrCode: string;
+  message: string;
+  expireAt: string;
 }
-export interface TransactionStatus {// KIỂM TRA XEM ĐƠN HÀNG THANH TOÁN CHƯA
- isPaid: boolean;
-    transaction?: any;
-    order?: any;
+
+export interface TransactionStatus {
+  success: boolean;
+  message: string;
+  order?: any;
 }
 
 export { ApiClient };

@@ -1,16 +1,14 @@
-import { ApiClient, PaymentInfo } from "@/lib/api-client";
+import { ApiClient, PaymentInfo, TransactionStatus } from "@/lib/api-client";
 import { apiClient } from "@/lib/api-client";
 
 export  class PaymentService {          
 
-    // tạo thông tin thanh toán qr 
-
-
+    // Tạo thông tin thanh toán (QR code)
     async createPaymentInfo(orderId: number)
     : Promise<{ success: boolean; data?: PaymentInfo; message?: string }>
      {
         try {
-            const response = await apiClient.post<PaymentInfo>(`/payments/${orderId}/create-info`); 
+            const response = await apiClient.post<PaymentInfo>('/payment/info', { orderId }); 
             return {
                 success: true,
                 data: response
@@ -23,17 +21,14 @@ export  class PaymentService {
             };
         }
     }
-    // KIỂM TRA TRẠNG THÁI THANH TOÁN 
 
-    async checkTransactionStatus(orderId: number)
-    : Promise<{ success: boolean; data?: { paid: boolean }; message?: string }> 
+    // Kiểm tra trạng thái thanh toán
+    async checkTransactionStatus(orderNumber: string)
+    : Promise<TransactionStatus> 
     {
         try{ 
-            const response = await apiClient.get<{ paid: boolean }>(`/payments/${orderId}/status`);
-            return {
-                success: true,
-                data: response
-            };
+            const response = await apiClient.get<TransactionStatus>(`/payment/check/${orderNumber}`);
+            return response;
         } catch (error: any) {
             console.error('Lỗi kiểm tra trạng thái thanh toán:', error);
             return {

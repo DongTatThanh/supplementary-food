@@ -12,14 +12,15 @@ export enum OrderStatus {
 }
 
 export interface CreateOrderDto {
+    customer_name: string;
+    customer_email: string;
+    customer_phone: string;
     shipping_address: string;
     shipping_city: string;
     shipping_district: string;
     shipping_ward: string;
-    phone: string;
-    email?: string;
     notes?: string;
-    payment_method: 'cod' | 'bank_transfer' | 'momo' | 'vnpay';
+    discount_code?: string;
 }
 export class OrderService {
     // Tạo đơn hàng mới

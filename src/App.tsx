@@ -13,6 +13,8 @@ import Cart from "./pages/Cart";
 import FlashSalePage from "./pages/FlashSale";
 import ToolTTDE from "./pages/ToolTTDE";
 import ToolBMI from "./pages/ToolBMI";
+import Checkout from "./pages/Checkout";
+import PaymentPage from "./pages/PaymentPage";
 
 
 
@@ -32,6 +34,9 @@ const App = () => (
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/category/:id" element={<ProductByCategory />} />
           <Route path="/cart/:user_id" element={<Cart />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/payment/:orderNumber" element={<PaymentPage />} />
           <Route path="/FlashSale" element={<FlashSalePage />} />
           <Route path="/ToolTTDE" element={<ToolTTDE />} />
           <Route path="/ToolBMI" element={<ToolBMI />} />
