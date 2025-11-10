@@ -1,3 +1,5 @@
+import { OrderStatus } from "@/services/order.service";
+
 
 // API Configuration với fallback values
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 
@@ -473,35 +475,52 @@ export interface PriceFilter{
   maxPrice: number;
 }
 
-export interface cart{
-  id: number;
-  user_id: number;
-  session_id: string;
-  created_at: string;
-  updated_at: string;
+// Cart Types - matching backend API structure
+export interface CartProduct extends Product {
+    brand: Brand;
+}
 
+export interface CartItem {
+    id: number;
+    cart_id: number;
+    product: CartProduct;
+    quantity: number;
+    price: string;
+    added_at: string;
+    updated_at: string;
+}
 
+export interface Cart {
+    id: number;
+    user_id: number;
+    session_id: string | null;
+    created_at: string;
+    updated_at: string;
+    items: CartItem[];
 }
-export interface CartResponse {
-  success: boolean;
-  data: cart[];
-  message?: string;
+export interface Order {
+    id: number;
+    order_number: string;
+    user_id: number;
+    total_amount: string;
+    status: OrderStatus;
+    payment_method: 'cod' | 'bank_transfer' | 'momo' | 'vnpay';
+    payment_status: string;
+    shipping_address: string;
+    created_at: string;
+    items: OrderItem[];
 }
-export interface CartItem{
-  id: number;
-  cart_id: number;
-  product_id: number;
-  quantity: number;
-  price: string;
-  
-  created_at: string;
-  updated_at: string;
+
+export interface OrderItem {
+    id: number;
+    product: any;
+    quantity: number;
+    price: string;
+    subtotal: string;
 }
-export interface CartItemsResponse {
-  success: boolean;
-  data: CartItem[];
-  message?: string;
-}
+
 export { ApiClient };
+
+
 
 

@@ -1,29 +1,9 @@
-import { apiClient, Brand, Product } from "@/lib/api-client";
+import { apiClient, Cart, CartItem, CartProduct } from '@/lib/api-client';
 
-// Types matching backend API response
-export interface CartProduct extends Product {
-    brand: Brand;
-}
+// Re-export types for convenience
+export type { Cart, CartItem, CartProduct };
 
-export interface CartItem {
-    id: number;
-    cart_id: number;
-    product: CartProduct;
-    quantity: number;
-    price: string;
-    added_at: string;
-    updated_at: string;
-}
-
-export interface Cart {
-    id: number;
-    user_id: number;
-    session_id: string | null;
-    created_at: string;
-    updated_at: string;
-    items: CartItem[];
-}
-
+// Payload types for API requests
 interface AddToCartPayload {
     product_id: number;
     quantity: number;
@@ -86,7 +66,7 @@ export class CartService {
     // Cập nhật số lượng sản phẩm trong giỏ hàng
     async updateCartItem(itemId: number, quantity: number): Promise<{ success: boolean; message: string }> {
         try {
-            // Backend uses POST for update, not PUT
+
             await apiClient.post(`/cart/items/${itemId}`, { quantity });
             return {
                 success: true,

@@ -1,7 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Cart, CartService } from '@/services/cart.service';
+import { Cart, CartItem } from '@/lib/api-client';
+import { CartService } from '@/services/cart.service';
+
+
 import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { getImageUrl } from '@/lib/api-client';

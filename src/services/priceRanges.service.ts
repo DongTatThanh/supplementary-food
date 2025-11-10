@@ -1,4 +1,4 @@
-import { cart } from './../lib/api-client';
+
 import { apiClient, Product, ProductsResponse } from '@/lib/api-client';
 
 export class PriceRangesService {
