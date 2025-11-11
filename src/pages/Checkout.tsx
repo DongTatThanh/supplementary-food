@@ -57,7 +57,7 @@ const Checkout = () => {
     const loadAvailableCodes = async () => {
         try {
             const codes = await discountService.getActiveCodes();
-            setAvailableCodes(codes.slice(0, 3)); // Hiển thị tối đa 3 mã
+            setAvailableCodes(codes.slice(0, 5)); 
         } catch (error) {
             console.error('Lỗi tải mã giảm giá:', error);
         }
@@ -232,67 +232,17 @@ const Checkout = () => {
                 Quay lại giỏ hàng
             </Button>
 
-            <h1 className="text-3xl font-bold mb-8">Thanh toán</h1>
+          
             
-            {/* Mã giảm giá có sẵn */}
-            {availableCodes.length > 0 && !appliedDiscount && (
-                <Card className="mb-6 border-green-200 bg-green-50">
-                    <CardContent className="pt-6">
-                        <div className="flex items-center gap-2 mb-4">
-                            <Tag className="w-5 h-5 text-green-600" />
-                            <h3 className="font-semibold text-green-800">Mã giảm giá có sẵn</h3>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                            {availableCodes.map((code) => (
-                                <div 
-                                    key={code.id}
-                                    className="bg-white border-2 border-dashed border-green-300 rounded-lg p-3 cursor-pointer hover:border-green-500 transition-colors"
-                                    onClick={() => quickApplyDiscount(code)}
-                                >
-                                    <div className="flex items-center justify-between mb-2">
-                                        <span className="font-bold text-green-700 text-lg">{code.code}</span>
-                                        <span className="text-xs text-green-600 font-semibold">
-                                            {code.discount_percentage ? `-${code.discount_percentage}%` : `-${code.discount_amount?.toLocaleString('vi-VN')}₫`}
-                                        </span>
-                                    </div>
-                                    {code.name && (
-                                        <p className="text-xs text-gray-600 line-clamp-2">{code.name}</p>
-                                    )}
-                                    {code.min_order_value && code.min_order_value > 0 && (
-                                        <p className="text-xs text-gray-500 mt-1">
-                                            Đơn tối thiểu: {code.min_order_value.toLocaleString('vi-VN')}₫
-                                        </p>
-                                    )}
-                                </div>
-                            ))}
-                        </div>
-                    </CardContent>
-                </Card>
-            )}
-            
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Form thông tin */}
-                <div className="lg:col-span-2">
+            {/* Layout 3 cột */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Cột 1: Thông tin mua hàng */}
+                <div>
                     <Card>
                         <CardHeader>
-                            <CardTitle>Thông tin giao hàng</CardTitle>
+                            <CardTitle className="text-lg">Thông tin mua hàng</CardTitle>
                         </CardHeader>
-                        <CardContent>
-                            <form onSubmit={handleSubmit} className="space-y-4">
-                                <Input
-                                    placeholder="Họ và tên *"
-                                    value={formData.customer_name}
-                                    onChange={(e) => setFormData({...formData, customer_name: e.target.value})}
-                                    required
-                                />
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <Input
-                                        placeholder="Số điện thoại *"
-                                        value={formData.customer_phone}
-                                        onChange={(e) => setFormData({...formData, customer_phone: e.target.value})}
-                                        required
-                                    />
+                        <CardContent className="space-y-4">
                                     <Input
                                         placeholder="Email *"
                                         type="email"
@@ -300,47 +250,154 @@ const Checkout = () => {
                                         onChange={(e) => setFormData({...formData, customer_email: e.target.value})}
                                         required
                                     />
-                                </div>
+                                    
+                                    <Input
+                                        placeholder="Họ và tên *"
+                                        value={formData.customer_name}
+                                        onChange={(e) => setFormData({...formData, customer_name: e.target.value})}
+                                        required
+                                    />
+                                    
+                                    <Input
+                                        placeholder="Số điện thoại *"
+                                        value={formData.customer_phone}
+                                        onChange={(e) => setFormData({...formData, customer_phone: e.target.value})}
+                                        required
+                                    />
+                                    
+                                    <Input
+                                        placeholder="Địa chỉ *"
+                                        value={formData.shipping_address}
+                                        onChange={(e) => setFormData({...formData, shipping_address: e.target.value})}
+                                        required
+                                    />
 
-                                <Input
-                                    placeholder="Địa chỉ cụ thể (số nhà, tên đường) *"
-                                    value={formData.shipping_address}
-                                    onChange={(e) => setFormData({...formData, shipping_address: e.target.value})}
-                                    required
-                                />
+                                    <div className="flex items-center space-x-2">
+                                        <input
+                                            type="checkbox"
+                                            id="sameAddress"
+                                            className="w-4 h-4"
+                                            defaultChecked
+                                        />
+                                        <label htmlFor="sameAddress" className="text-sm text-gray-700">
+                                            Giao hàng đến địa chỉ khác
+                                        </label>
+                                    </div>
 
-                                {/* Component chọn địa chỉ */}
-                                <AddressSelect
-                                    onProvinceChange={(name) => setFormData({...formData, shipping_city: name})}
-                                    onDistrictChange={(name) => setFormData({...formData, shipping_district: name})}
-                                    onWardChange={(name) => setFormData({...formData, shipping_ward: name})}
-                                />
+                                    {/* Thông tin nhận hàng */}
+                                    <div className="pt-4 border-t space-y-4">
+                                        <h3 className="font-semibold text-gray-800">Thông tin nhận hàng</h3>
+                                        
+                                        <Input
+                                            placeholder="Họ và tên *"
+                                            value={formData.customer_name}
+                                            onChange={(e) => setFormData({...formData, customer_name: e.target.value})}
+                                            required
+                                        />
+                                        
+                                        <Input
+                                            placeholder="Số điện thoại *"
+                                            value={formData.customer_phone}
+                                            onChange={(e) => setFormData({...formData, customer_phone: e.target.value})}
+                                            required
+                                        />
+                                        
+                                        <Input
+                                            placeholder="Địa chỉ *"
+                                            value={formData.shipping_address}
+                                            onChange={(e) => setFormData({...formData, shipping_address: e.target.value})}
+                                            required
+                                        />
 
-                                <Textarea
-                                    placeholder="Ghi chú đơn hàng (tùy chọn)"
-                                    value={formData.notes}
-                                    onChange={(e) => setFormData({...formData, notes: e.target.value})}
-                                    rows={3}
-                                />
+                                        {/* Component chọn địa chỉ */}
+                                        <AddressSelect
+                                            onProvinceChange={(name) => setFormData({...formData, shipping_city: name})}
+                                            onDistrictChange={(name) => setFormData({...formData, shipping_district: name})}
+                                            onWardChange={(name) => setFormData({...formData, shipping_ward: name})}
+                                        />
 
-                                <Button 
-                                    type="submit" 
-                                    className="w-full bg-red-600 hover:bg-red-700 h-12 text-lg"
-                                    disabled={loading}
-                                >
-                                    {loading ? 'Đang xử lý...' : 'Đặt hàng'}
-                                </Button>
-                            </form>
+                                        <Textarea
+                                            placeholder="Ghi chú đơn hàng (tùy chọn)"
+                                            value={formData.notes}
+                                            onChange={(e) => setFormData({...formData, notes: e.target.value})}
+                                            rows={3}
+                                        />
+                                    </div>
                         </CardContent>
                     </Card>
                 </div>
 
-                {/* Tóm tắt đơn hàng */}
+                {/* Cột 2: Vận chuyển & Thanh toán */}
+                <div className="space-y-6">
+                    {/* Vận chuyển */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="text-lg">Vận chuyển</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-3">
+                                <div className="flex items-center justify-between p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                                    <div className="flex items-center gap-3">
+                                        <input 
+                                            type="radio" 
+                                            name="shipping" 
+                                            id="ship-fast"
+                                            defaultChecked
+                                            className="w-4 h-4"
+                                        />
+                                        <label htmlFor="ship-fast" className="cursor-pointer">
+                                            <p className="font-medium">Giao hàng nhanh (1-4 giờ)</p>
+                                        </label>
+                                    </div>
+                                    <span className="font-semibold">Miễn phí</span>
+                                </div>
+                                
+                                <div className="flex items-center justify-between p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                                    <div className="flex items-center gap-3">
+                                        <input 
+                                            type="radio" 
+                                            name="shipping" 
+                                            id="ship-normal"
+                                            className="w-4 h-4"
+                                        />
+                                        <label htmlFor="ship-normal" className="cursor-pointer">
+                                            <p className="font-medium">Giao hàng thường (1-3 ngày)</p>
+                                        </label>
+                                    </div>
+                                    <span className="font-semibold">Miễn phí</span>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                    {/* Thanh toán */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="text-lg">Thanh toán</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-3">
+                            <div className="flex items-center justify-between p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                                <div className="flex items-center gap-3">
+                                    <input 
+                                        type="radio" 
+                                        name="payment" 
+                                        id="payment-cod"
+                                        defaultChecked
+                                        className="w-4 h-4"
+                                    />
+                                    <label htmlFor="payment-cod" className="cursor-pointer">
+                                        <p className="font-medium">Thanh Toán Khi Giao Hàng (COD)</p>
+                                    </label>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+          
+                {/* Cột 3: Đơn hàng */}
                 <div>
                     <Card className="sticky top-4">
                         <CardHeader>
                             <CardTitle>Đơn hàng của bạn</CardTitle>
-                        </CardHeader>
+                        </CardHeader>2
                         <CardContent className="space-y-4">
                             <div className="space-y-3 max-h-96 overflow-y-auto">
                                 {cart.items.map((item) => (
@@ -363,7 +420,29 @@ const Checkout = () => {
                                         </div>
                                     </div>
                                 ))}
+                                  {/* Mã giảm giá có sẵn - compact */}
+          
                             </div>
+                              {availableCodes.length > 0 && !appliedDiscount && (
+                <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-6">
+                    <div className="flex items-center gap-2 mb-2">
+                        <Tag className="w-4 h-4 text-green-600" />
+                        <span className="text-sm font-semibold text-green-800">Mã giảm giá có sẵn</span>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                        {availableCodes.map((code) => (
+                            <button
+                                key={code.id}
+                                onClick={() => quickApplyDiscount(code)}
+                                className="bg-white border border-green-300 rounded px-3 py-1.5 text-xs font-semibold text-green-700 hover:bg-green-100 hover:border-green-500 transition-colors"
+                            >
+                                {code.code}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            )}
+
 
                             <div className="space-y-2 pt-4 border-t">
                                 <div className="flex justify-between text-sm">
@@ -442,10 +521,31 @@ const Checkout = () => {
                                     <span className="text-red-600">{getFinalTotal().toLocaleString('vi-VN')}₫</span>
                                 </div>
                             </div>
+
+                            {/* Nút quay về giỏ hàng */}
+                            <Button
+                                variant="outline"
+                                onClick={() => navigate('/cart')}
+                                className="w-full"
+                            >
+                                <ArrowLeft className="w-4 h-4 mr-2" />
+                                Quay về giỏ hàng
+                            </Button>
+
+                            {/* Nút đặt hàng */}
+                            <Button 
+                                onClick={handleSubmit}
+                                disabled={loading}
+                                className="w-full bg-red-600 hover:bg-red-700 h-12 text-base font-semibold"
+                            >
+                                {loading ? 'Đang xử lý...' : 'ĐẶT HÀNG'}
+                            </Button>
                         </CardContent>
                     </Card>
                 </div>
             </div>
+    
+
         </div>
     );
 };
