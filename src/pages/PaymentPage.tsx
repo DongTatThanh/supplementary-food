@@ -146,7 +146,7 @@ const Payment = () => {
                         </p>
                         <div className="flex gap-4 justify-center">
                             <Button 
-                                onClick={() => navigate(`/orders/${order.id}`)}
+                                onClick={() => navigate(`/order/${orderNumber}`)}
                                 className="bg-red-600 hover:bg-red-700"
                             >
                                 Xem chi tiết đơn hàng

@@ -15,6 +15,7 @@ import ToolTTDE from "./pages/ToolTTDE";
 import ToolBMI from "./pages/ToolBMI";
 import Checkout from "./pages/Checkout";
 import PaymentPage from "./pages/PaymentPage";
+import OrderDetail from "./pages/OrderDetail";
 
 
 
@@ -37,6 +38,7 @@ const App = () => (
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/payment/:orderNumber" element={<PaymentPage />} />
+          <Route path="/order/:orderNumber" element={<OrderDetail />} />
           <Route path="/FlashSale" element={<FlashSalePage />} />
           <Route path="/ToolTTDE" element={<ToolTTDE />} />
           <Route path="/ToolBMI" element={<ToolBMI />} />

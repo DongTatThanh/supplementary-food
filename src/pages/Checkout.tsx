@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getImageUrl, DiscountCode } from '@/lib/api-client';
-import { ArrowLeft, Tag, X } from 'lucide-react';
+import { ArrowLeft, Tag, X, MapPin } from 'lucide-react';
 import DiscountCodeService from '@/services/discountCode.service';
 import AddressSelect from '@/components/address/AddressSelect';
 
@@ -70,6 +70,65 @@ const Checkout = () => {
             title: "Áp dụng thành công!",
             description: `Bạn đã được giảm ${code.discount_percentage ? code.discount_percentage + '%' : code.discount_amount?.toLocaleString('vi-VN') + '₫'}`,
         });
+    };
+
+    const handleAutoFillAddress = () => {
+        if (!navigator.geolocation) {
+            toast({
+                title: " Không hỗ trợ",
+                description: "Trình duyệt không hỗ trợ chia sẻ vị trí!",
+                variant: "destructive"
+            });
+            return;
+        }
+
+        toast({
+            title: "📍 Đang lấy vị trí...",
+            description: "Vui lòng chờ trong giây lát",
+        });
+
+        navigator.geolocation.getCurrentPosition(
+            async (pos) => {
+                const { latitude, longitude } = pos.coords;
+
+                try {
+                    const res = await fetch(
+                        `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&accept-language=vi`
+                    );
+
+                    const data = await res.json();
+                    const addr = data.address || {};
+
+                    // Tự động điền toàn bộ trường
+                    setFormData(prev => ({
+                        ...prev,
+                        shipping_address: addr.road || addr.neighbourhood || "",
+                        shipping_city: addr.state || addr.city || "",
+                        shipping_district: addr.county || addr.city_district || "",
+                        shipping_ward: addr.suburb || addr.village || addr.hamlet || ""
+                    }));
+
+                    toast({
+                        title: " Thành công!",
+                        description: "Đã tự động điền địa chỉ hiện tại của bạn",
+                    });
+                } catch (error) {
+                    console.error(error);
+                    toast({
+                        title: " Lỗi",
+                        description: "Không thể lấy địa chỉ hiện tại!",
+                        variant: "destructive"
+                    });
+                }
+            },
+            () => {
+                toast({
+                    title: " Quyền truy cập bị từ chối",
+                    description: "Bạn cần cho phép trình duyệt truy cập vị trí!",
+                    variant: "destructive"
+                });
+            }
+        );
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -302,12 +361,23 @@ const Checkout = () => {
                                             required
                                         />
                                         
-                                        <Input
-                                            placeholder="Địa chỉ *"
-                                            value={formData.shipping_address}
-                                            onChange={(e) => setFormData({...formData, shipping_address: e.target.value})}
-                                            required
-                                        />
+                                        <div className="space-y-2">
+                                            <Input
+                                                placeholder="Địa chỉ *"
+                                                value={formData.shipping_address}
+                                                onChange={(e) => setFormData({...formData, shipping_address: e.target.value})}
+                                                required
+                                            />
+                                            <Button 
+                                                type="button"
+                                                variant="outline"
+                                                onClick={handleAutoFillAddress}
+                                                className="w-full flex items-center justify-center gap-2"
+                                            >
+                                                <MapPin className="w-4 h-4" />
+                                                Lấy vị trí hiện tại
+                                            </Button>
+                                        </div>
 
                                         {/* Component chọn địa chỉ */}
                                         <AddressSelect

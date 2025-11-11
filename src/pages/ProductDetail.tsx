@@ -7,7 +7,10 @@ import {
 import { ProductDetailData, ProductVariant, DiscountCode, getImageUrl } from '../lib/api-client';
 import { ProductsService } from '@/services/products.service';
 import { DiscountCodeService } from '@/services/discountCode.service';
-
+import { CartService } from '@/services/cart.service';
+import { useToast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 // Import các component con
 import { ProductImageGallery } from '@/components/ProductDetail/ProductImageGallery';
@@ -18,6 +21,9 @@ import { ProductTabs } from '@/components/ProductDetail/ProductTabs';
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const cartService = new CartService();
+  
   const [product, setProduct] = useState<ProductDetailData | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState<string>('');
@@ -25,6 +31,7 @@ const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
   const [discountCodes, setDiscountCodes] = useState<DiscountCode[]>([]);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -56,7 +63,7 @@ const ProductDetail = () => {
         const codes = await service.getActiveDiscountCodes();
         setDiscountCodes(codes);
       } catch (error) {
-        console.error('Error fetching discount codes:', error);
+        console.error("lỗi ", error);
       }
     };
 
@@ -70,6 +77,45 @@ const ProductDetail = () => {
     navigator.clipboard.writeText(code);
     setCopiedCode(code);
     setTimeout(() => setCopiedCode(null), 2000);
+  };
+
+  const handleBuyNow = async () => {
+    if (!product) return;
+
+    setIsAddingToCart(true);
+    try {
+      const result = await cartService.addToCart(
+        product.id,
+        quantity,
+        selectedVariant?.id
+      );
+
+      if (result.success) {
+        toast({
+          title: " Đã thêm vào giỏ hàng!",
+          description: `${product.name} x ${quantity}`,
+        });
+        
+        // Chuyển đến trang giỏ hàng
+        setTimeout(() => {
+          navigate('/cart');
+        }, 500);
+      } else {
+        toast({
+          title: " Lỗi",
+          description: result.message || "Không thể thêm vào giỏ hàng",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: " Lỗi",
+        description: "Không thể thêm vào giỏ hàng. Vui lòng thử lại!",
+        variant: "destructive",
+      });
+    } finally {
+      setIsAddingToCart(false);
+    }
   };
 
   if (loading) {
@@ -235,13 +281,21 @@ const ProductDetail = () => {
 
             {/* Buttons */}
             <div className="grid grid-cols-2 gap-4 mb-6">
-              <button className="bg-red-600 text-white py-4 rounded-lg font-bold text-lg hover:bg-red-700 transition flex items-center justify-center gap-2 shadow-lg">
+              <button 
+                onClick={handleBuyNow}
+                disabled={isAddingToCart}
+                className="bg-red-600 text-white py-4 rounded-lg font-bold text-lg hover:bg-red-700 transition flex items-center justify-center gap-2 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              >
                 <ShoppingCart className="w-5 h-5" />
-                THÊM VÀO GIỎ
+                {isAddingToCart ? 'Đang xử lý...' : 'THÊM VÀO GIỎ'}
               </button>
-              <button className="bg-blue-600 text-white py-4 rounded-lg font-bold text-lg hover:bg-blue-700 transition shadow-lg">
-                MUA NGAY
-                <div className="text-xs font-normal">Giao tận nơi hoặc nhận tại cửa hàng</div>
+              <button 
+                onClick={handleBuyNow}
+                disabled={isAddingToCart}
+                className="bg-blue-600 text-white py-4 rounded-lg font-bold text-lg hover:bg-blue-700 transition shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isAddingToCart ? 'Đang xử lý...' : 'MUA NGAY'}
+                {!isAddingToCart && <div className="text-xs font-normal">Giao tận nơi hoặc nhận tại cửa hàng</div>}
               </button>
             </div>
 
