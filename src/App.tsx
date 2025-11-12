@@ -16,9 +16,7 @@ import ToolBMI from "./pages/ToolBMI";
 import Checkout from "./pages/Checkout";
 import PaymentPage from "./pages/PaymentPage";
 import OrderDetail from "./pages/OrderDetail";
-
-
-
+import FloatingContactButton from "./components/contact/FloatingContactButton";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +26,9 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        {/* Floating Contact Button - hiển thị trên tất cả trang */}
+        <FloatingContactButton />
+        
         <Routes>
           <Route element={<Layout />}>
           <Route path="/" element={<Index />} />

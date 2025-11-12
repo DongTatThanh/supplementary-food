@@ -36,11 +36,18 @@ const Payment = () => {
         try {
             // Load order details
             const orderData = await orderService.getOrderByNumber(orderNumber);
+            console.log('📦 Order Data:', orderData);
+            console.log('💰 Order Total Amount:', orderData?.total_amount);
+            console.log('🎫 Order Discount Code:', orderData?.discount_code);
+            console.log('🚚 Order Shipping Fee:', orderData?.shipping_fee);
             setOrder(orderData);
 
             // Create payment info (QR code) for bank transfer
             if (orderData?.id) {
                 const paymentResult = await paymentService.createPaymentInfo(orderData.id);
+                console.log('💳 Payment Info:', paymentResult.data);
+                console.log('💵 Payment Amount:', paymentResult.data?.amount);
+                
                 if (paymentResult.success && paymentResult.data) {
                     setPaymentInfo(paymentResult.data);
                 } else {

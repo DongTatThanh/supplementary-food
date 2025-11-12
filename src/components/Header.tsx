@@ -187,7 +187,7 @@ const Header = () => {
                       <NavigationMenuLink asChild>
                         <div onClick={handleToolBMIClick} className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground cursor-pointer">
                           <div className="text-sm font-medium leading-none">Công Cụ Tính BMI Online</div>
-                        </div>
+                        </div>  
                       </NavigationMenuLink>
                     </div>
                   </NavigationMenuContent>

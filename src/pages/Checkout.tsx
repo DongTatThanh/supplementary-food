@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getImageUrl, DiscountCode } from '@/lib/api-client';
-import { ArrowLeft, Tag, X, MapPin } from 'lucide-react';
+import { ArrowLeft, Tag, X } from 'lucide-react';
 import DiscountCodeService from '@/services/discountCode.service';
 import AddressSelect from '@/components/address/AddressSelect';
 
@@ -72,75 +72,42 @@ const Checkout = () => {
         });
     };
 
-    const handleAutoFillAddress = () => {
-        if (!navigator.geolocation) {
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        
+        // Validate email with proper regex
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!formData.customer_email || !emailRegex.test(formData.customer_email)) {
             toast({
-                title: " Không hỗ trợ",
-                description: "Trình duyệt không hỗ trợ chia sẻ vị trí!",
+                title: "Email không hợp lệ",
+                description: "Vui lòng nhập địa chỉ email đầy đủ (ví dụ: example@gmail.com)",
                 variant: "destructive"
             });
             return;
         }
-
-        toast({
-            title: "📍 Đang lấy vị trí...",
-            description: "Vui lòng chờ trong giây lát",
-        });
-
-        navigator.geolocation.getCurrentPosition(
-            async (pos) => {
-                const { latitude, longitude } = pos.coords;
-
-                try {
-                    const res = await fetch(
-                        `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&accept-language=vi`
-                    );
-
-                    const data = await res.json();
-                    const addr = data.address || {};
-
-                    // Tự động điền toàn bộ trường
-                    setFormData(prev => ({
-                        ...prev,
-                        shipping_address: addr.road || addr.neighbourhood || "",
-                        shipping_city: addr.state || addr.city || "",
-                        shipping_district: addr.county || addr.city_district || "",
-                        shipping_ward: addr.suburb || addr.village || addr.hamlet || ""
-                    }));
-
-                    toast({
-                        title: " Thành công!",
-                        description: "Đã tự động điền địa chỉ hiện tại của bạn",
-                    });
-                } catch (error) {
-                    console.error(error);
-                    toast({
-                        title: " Lỗi",
-                        description: "Không thể lấy địa chỉ hiện tại!",
-                        variant: "destructive"
-                    });
-                }
-            },
-            () => {
-                toast({
-                    title: " Quyền truy cập bị từ chối",
-                    description: "Bạn cần cho phép trình duyệt truy cập vị trí!",
-                    variant: "destructive"
-                });
-            }
-        );
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+        
+        // Validate required fields
+        if (!formData.customer_name || !formData.customer_phone || !formData.shipping_address) {
+            toast({
+                title: "Thiếu thông tin",
+                description: "Vui lòng điền đầy đủ thông tin bắt buộc",
+                variant: "destructive"
+            });
+            return;
+        }
+        
         setLoading(true);
 
         try {
-            // Thêm mã giảm giá vào order data nếu có
+            // Tạo order data - không gửi total_amount và shipping_fee (backend tự tính)
             const orderData: CreateOrderDto = {
                 ...formData,
                 ...(appliedDiscount && { discount_code: appliedDiscount.code })
             };
+            
+            console.log('📤 Sending Order Data to Backend:', orderData);
+            console.log('🎫 Applied Discount:', appliedDiscount);
+            console.log('💳 Discount Code:', appliedDiscount?.code);
             
             const result = await orderService.createOrder(orderData);
             
@@ -183,29 +150,36 @@ const Checkout = () => {
         const subtotal = calculateTotal();
         
         // Kiểm tra đơn hàng tối thiểu
-        const minOrder = appliedDiscount.min_order_value || 0;
-        if (subtotal < minOrder) return 0;
-        
-        let discount = 0;
-        
-        // Tính giảm giá theo phần trăm
-        if (appliedDiscount.discount_percentage) {
-            discount = (subtotal * appliedDiscount.discount_percentage) / 100;
-            
-            // Áp dụng giảm giá tối đa nếu có
-            const maxDiscount = appliedDiscount.max_discount_amount || Infinity;
-            discount = Math.min(discount, maxDiscount);
-        } 
-        // Tính giảm giá theo số tiền cố định
-        else if (appliedDiscount.discount_amount) {
-            discount = appliedDiscount.discount_amount;
+        const minOrder = parseFloat(appliedDiscount.minimum_order_amount || '0');
+        if (subtotal < minOrder) {
+            return 0;
         }
         
-        return Math.min(discount, subtotal); // Không giảm quá tổng tiền
+        let discount = 0;
+        const discountValue = parseFloat(appliedDiscount.value || '0');
+        
+        // Tính giảm giá theo type
+        if (appliedDiscount.type === 'percentage') {
+            // Giảm theo phần trăm
+            discount = (subtotal * discountValue) / 100;
+            
+            // Áp dụng giảm giá tối đa nếu có
+            const maxDiscount = parseFloat(appliedDiscount.maximum_discount_amount || '0');
+            if (maxDiscount > 0) {
+                discount = Math.min(discount, maxDiscount);
+            }
+        } else if (appliedDiscount.type === 'fixed') {
+            // Giảm theo số tiền cố định
+            discount = discountValue;
+        }
+        
+        return Math.min(discount, subtotal);
     };
 
     const getFinalTotal = () => {
-        return calculateTotal() - calculateDiscount();
+        const total = calculateTotal();
+        const discount = calculateDiscount();
+        return total - discount;
     };
 
     const applyDiscountCode = async () => {
@@ -302,13 +276,19 @@ const Checkout = () => {
                             <CardTitle className="text-lg">Thông tin mua hàng</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                                    <Input
-                                        placeholder="Email *"
-                                        type="email"
-                                        value={formData.customer_email}
-                                        onChange={(e) => setFormData({...formData, customer_email: e.target.value})}
-                                        required
-                                    />
+                                    <div>
+                                        <Input
+                                            placeholder="Email *"
+                                            type="email"
+                                            value={formData.customer_email}
+                                            onChange={(e) => setFormData({...formData, customer_email: e.target.value})}
+                                            required
+                                            className={formData.customer_email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.customer_email) ? 'border-red-500' : ''}
+                                        />
+                                        {formData.customer_email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.customer_email) && (
+                                            <p className="text-xs text-red-500 mt-1">Email không hợp lệ (ví dụ: example@gmail.com)</p>
+                                        )}
+                                    </div>
                                     
                                     <Input
                                         placeholder="Họ và tên *"
@@ -361,23 +341,12 @@ const Checkout = () => {
                                             required
                                         />
                                         
-                                        <div className="space-y-2">
-                                            <Input
-                                                placeholder="Địa chỉ *"
-                                                value={formData.shipping_address}
-                                                onChange={(e) => setFormData({...formData, shipping_address: e.target.value})}
-                                                required
-                                            />
-                                            <Button 
-                                                type="button"
-                                                variant="outline"
-                                                onClick={handleAutoFillAddress}
-                                                className="w-full flex items-center justify-center gap-2"
-                                            >
-                                                <MapPin className="w-4 h-4" />
-                                                Lấy vị trí hiện tại
-                                            </Button>
-                                        </div>
+                                        <Input
+                                            placeholder="Địa chỉ *"
+                                            value={formData.shipping_address}
+                                            onChange={(e) => setFormData({...formData, shipping_address: e.target.value})}
+                                            required
+                                        />
 
                                         {/* Component chọn địa chỉ */}
                                         <AddressSelect
@@ -575,18 +544,28 @@ const Checkout = () => {
                                     )}
                                 </div>
                                 
+                                {/* Tổng tiền hàng */}
+                                <div className="flex justify-between text-sm pt-3 border-t">
+                                    <span className="text-gray-600">Tạm tính:</span>
+                                    <span className="font-semibold">{calculateTotal().toLocaleString('vi-VN')}₫</span>
+                                </div>
+                                
+                                {/* Giảm giá */}
                                 {appliedDiscount && calculateDiscount() > 0 && (
-                                    <div className="flex justify-between text-sm text-green-600">
-                                        <span>Giảm giá:</span>
-                                        <span className="font-semibold">-{calculateDiscount().toLocaleString('vi-VN')}₫</span>
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-gray-600">Giảm giá ({appliedDiscount.code}):</span>
+                                        <span className="font-semibold text-green-600">-{calculateDiscount().toLocaleString('vi-VN')}₫</span>
                                     </div>
                                 )}
                                 
+                                {/* Phí vận chuyển */}
                                 <div className="flex justify-between text-sm">
                                     <span className="text-gray-600">Phí vận chuyển:</span>
                                     <span className="font-semibold text-green-600">Miễn phí</span>
                                 </div>
-                                <div className="flex justify-between text-lg font-bold pt-2 border-t">
+                                
+                                {/* Tổng cộng */}
+                                <div className="flex justify-between text-lg font-bold pt-3 border-t">
                                     <span>Tổng cộng:</span>
                                     <span className="text-red-600">{getFinalTotal().toLocaleString('vi-VN')}₫</span>
                                 </div>
