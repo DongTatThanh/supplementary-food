@@ -3,19 +3,52 @@ import { useParams, useNavigate } from 'react-router-dom';
 import orderService from '@/services/order.service';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Package, MapPin, Clock, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Package, MapPin, Clock, CheckCircle, Eye, XCircle } from 'lucide-react';
 import { getImageUrl } from '@/lib/api-client';
+import { useToast } from '@/hooks/use-toast';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const OrderDetail = () => {
     const { orderNumber } = useParams<{ orderNumber: string }>();
     const navigate = useNavigate();
+    const { toast } = useToast();
     const [order, setOrder] = useState<any>(null);
+    const [orders, setOrders] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [showCancelDialog, setShowCancelDialog] = useState(false);
+    const [cancelling, setCancelling] = useState(false);
+    const [cancelReason, setCancelReason] = useState('');
 
     useEffect(() => {
-        loadOrderDetail();
+        if (orderNumber) {
+            loadOrderDetail();
+        } else {
+            loadOrdersList();
+        }
     }, [orderNumber]);
 
+    // Load danh sách đơn hàng
+    const loadOrdersList = async () => {
+        try {
+            const data = await orderService.getUserOrders();
+            setOrders(data);
+        } catch (error) {
+            console.error('Error loading orders:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Load chi tiết 1 đơn hàng
     const loadOrderDetail = async () => {
         if (!orderNumber) return;
         
@@ -27,6 +60,36 @@ const OrderDetail = () => {
         } finally {
             setLoading(false);
         }
+    };
+
+    // Hủy đơn hàng
+    const handleCancelOrder = async () => {
+        if (!order?.id) return;
+        
+        setCancelling(true);
+        try {
+            await orderService.cancelOrder(order.id);
+            toast({
+                title: "Hủy đơn hàng thành công",
+                description: `Đơn hàng ${order.order_number} đã được hủy`,
+            });
+            setShowCancelDialog(false);
+            // Reload order để cập nhật trạng thái
+            loadOrderDetail();
+        } catch (error: any) {
+            toast({
+                title: "Không thể hủy đơn hàng",
+                description: error.message || "Vui lòng thử lại sau",
+                variant: "destructive"
+            });
+        } finally {
+            setCancelling(false);
+        }
+    };
+
+    // Kiểm tra có thể hủy đơn không (chỉ pending)
+    const canCancelOrder = (status: string) => {
+        return status === 'pending';
     };
 
     const getStatusColor = (status: string) => {
@@ -74,14 +137,81 @@ const OrderDetail = () => {
         );
     }
 
+    // Hiển thị DANH SÁCH đơn hàng
+    if (!orderNumber) {
+        return (
+            <div className="container mx-auto px-4 py-8">
+                <h1 className="text-3xl font-bold mb-6">Đơn hàng của tôi</h1>
+                
+                {orders.length === 0 ? (
+                    <Card className="text-center py-12">
+                        <CardContent>
+                            <Package className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+                            <p className="text-xl mb-2">Chưa có đơn hàng nào</p>
+                            <p className="text-gray-600 mb-6">Hãy mua sắm và tạo đơn hàng đầu tiên của bạn!</p>
+                            <Button onClick={() => navigate('/')} className="bg-red-600 hover:bg-red-700">
+                                Mua sắm ngay
+                            </Button>
+                        </CardContent>
+                    </Card>
+                ) : (
+                    <div className="space-y-4">
+                        {orders.map((order) => (
+                            <Card key={order.id} className="hover:shadow-lg transition-shadow">
+                                <CardContent className="p-6">
+                                    <div className="flex justify-between items-start mb-4">
+                                        <div>
+                                            <p className="text-sm text-gray-600">Mã đơn hàng</p>
+                                            <p className="font-semibold text-lg">{order.order_number}</p>
+                                        </div>
+                                        <span className={`px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(order.status)}`}>
+                                            {getStatusText(order.status)}
+                                        </span>
+                                    </div>
+                                    
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                        <div>
+                                            <p className="text-sm text-gray-600">Ngày đặt</p>
+                                            <p className="font-medium">{new Date(order.order_date).toLocaleDateString('vi-VN')}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-sm text-gray-600">Tổng tiền</p>
+                                            <p className="font-bold text-red-600">{parseFloat(order.total_amount).toLocaleString('vi-VN')}₫</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-sm text-gray-600">Sản phẩm</p>
+                                            <p className="font-medium">{order.items?.length || 0} sản phẩm</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="flex justify-end">
+                                        <Button 
+                                            variant="outline" 
+                                            onClick={() => navigate(`/order/${order.order_number}`)}
+                                            className="flex items-center gap-2"
+                                        >
+                                            <Eye className="w-4 h-4" />
+                                            Xem chi tiết
+                                        </Button>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
+                )}
+            </div>
+        );
+    }
+
+    // Hiển thị CHI TIẾT 1 đơn hàng (có orderNumber)
     if (!order) {
         return (
             <div className="container mx-auto px-4 py-8">
                 <Card className="max-w-2xl mx-auto text-center">
                     <CardContent className="pt-12 pb-12">
                         <p className="text-xl mb-4">Không tìm thấy đơn hàng</p>
-                        <Button onClick={() => navigate('/')}>
-                            Về trang chủ
+                        <Button onClick={() => navigate('/order')}>
+                            Xem danh sách đơn hàng
                         </Button>
                     </CardContent>
                 </Card>
@@ -93,11 +223,11 @@ const OrderDetail = () => {
         <div className="container mx-auto px-4 py-8">
             <Button 
                 variant="ghost" 
-                onClick={() => navigate('/')}
+                onClick={() => navigate('/order')}
                 className="mb-4"
             >
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Tiếp tục mua sắm
+                Quay lại danh sách đơn hàng
             </Button>
 
             {/* Header */}
@@ -112,7 +242,7 @@ const OrderDetail = () => {
                     Mã đơn hàng: <span className="font-semibold text-red-600">{order.order_number}</span>
                 </p>
                 <p className="text-sm text-gray-500">
-                    Đặt hàng lúc: {new Date(order.created_at).toLocaleString('vi-VN')}
+                    Đặt hàng lúc: {new Date(order.createOrder).toLocaleString('vi-VN')}
                 </p>
             </div>
 
@@ -330,10 +460,46 @@ const OrderDetail = () => {
                                     Thanh toán ngay
                                 </Button>
                             )}
+
+                            {/* Nút hủy đơn hàng - chỉ hiển thị khi pending */}
+                            {canCancelOrder(order.status) && (
+                                <Button
+                                    onClick={() => setShowCancelDialog(true)}
+                                    variant="outline"
+                                    className="w-full border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700"
+                                >
+                                    <XCircle className="w-4 h-4 mr-2" />
+                                    Hủy đơn hàng
+                                </Button>
+                            )}
                         </CardContent>
                     </Card>
                 </div>
             </div>
+
+            {/* Dialog xác nhận hủy đơn */}
+            <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Xác nhận hủy đơn hàng</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Bạn có chắc chắn muốn hủy đơn hàng <strong>{order?.order_number}</strong>?
+                            <br />
+                            Hành động này không thể hoàn tác.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Không, giữ đơn hàng</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={handleCancelOrder}
+                            disabled={cancelling}
+                            className="bg-red-600 hover:bg-red-700"
+                        >
+                            {cancelling ? 'Đang hủy...' : 'Có, hủy đơn hàng'}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     );
 };

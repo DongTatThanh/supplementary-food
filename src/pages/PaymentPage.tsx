@@ -36,24 +36,20 @@ const Payment = () => {
         try {
             // Load order details
             const orderData = await orderService.getOrderByNumber(orderNumber);
-            console.log('📦 Order Data:', orderData);
-            console.log('💰 Order Total Amount:', orderData?.total_amount);
-            console.log('🎫 Order Discount Code:', orderData?.discount_code);
-            console.log('🚚 Order Shipping Fee:', orderData?.shipping_fee);
             setOrder(orderData);
+            
 
             // Create payment info (QR code) for bank transfer
             if (orderData?.id) {
                 const paymentResult = await paymentService.createPaymentInfo(orderData.id);
-                console.log('💳 Payment Info:', paymentResult.data);
-                console.log('💵 Payment Amount:', paymentResult.data?.amount);
+               
                 
                 if (paymentResult.success && paymentResult.data) {
                     setPaymentInfo(paymentResult.data);
                 } else {
                     console.error('Payment Error:', paymentResult.message);
                     toast({
-                        title: "⚠️ Không thể tạo QR code",
+                        title: " Không thể tạo QR code",
                         description: paymentResult.message || "Vui lòng chuyển khoản thủ công theo thông tin bên dưới",
                         variant: "destructive",
                     });
@@ -86,7 +82,7 @@ const Payment = () => {
                 });
             } else {
                 toast({
-                    title: "⏳ Chưa nhận được thanh toán",
+                    title: " Chưa nhận được thanh toán",
                     description: result.message || "Vui lòng kiểm tra lại nội dung chuyển khoản phải chứa mã đơn hàng",
                     variant: "default",
                     duration: 4000,
@@ -274,58 +270,9 @@ const Payment = () => {
                                     </div>
                                 </div>
 
-                                <div className="bg-red-50 border-2 border-red-300 rounded-lg p-4">
-                                    <p className="text-sm text-red-800">
-                                        <span className="font-bold text-lg">⚠️ CỰC KỲ QUAN TRỌNG:</span>
-                                        <br />
-                                        <br />
-                                        <span className="font-bold text-base">• Nội dung chuyển khoản BẮT BUỘC phải là: </span>
-                                        <span className="font-mono font-bold text-blue-600 text-lg bg-white px-2 py-1 rounded">{paymentInfo.content}</span>
-                                        <br />
-                                        <br />
-                                        • Nhập <span className="font-bold">CHÍNH XÁC</span> mã trên khi chuyển khoản
-                                        <br />
-                                        • Nếu sai nội dung, hệ thống <span className="font-bold">KHÔNG THỂ</span> xác nhận tự động
-                                        <br />
-                                        • Số tiền phải <span className="font-bold">ĐÚNG HOẶC NHIỀU HƠN</span> {paymentInfo.amount.toLocaleString('vi-VN')}₫
-                                    </p>
-                                </div>
+                               
 
-                                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                                    <p className="text-sm text-green-800">
-                                        <span className="font-semibold">✅ Sau khi chuyển khoản:</span>
-                                        <br />
-                                        • Đợi 10-30 giây để giao dịch được xử lý
-                                        <br />
-                                        • Hệ thống sẽ tự động kiểm tra và xác nhận
-                                        <br />
-                                        • Hoặc nhấn nút "Kiểm tra thanh toán" bên dưới
-                                    </p>
-                                </div>
-
-                                <div className="text-center">
-                                    <Button 
-                                        onClick={checkPaymentStatus}
-                                        disabled={checking}
-                                        className="bg-red-600 hover:bg-red-700"
-                                        size="lg"
-                                    >
-                                        {checking ? (
-                                            <>
-                                                <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-                                                Đang kiểm tra...
-                                            </>
-                                        ) : (
-                                            <>
-                                                <RefreshCw className="w-4 h-4 mr-2" />
-                                                Kiểm tra thanh toán
-                                            </>
-                                        )}
-                                    </Button>
-                                    <p className="text-xs text-gray-500 mt-2">
-                                        Hệ thống sẽ tự động kiểm tra mỗi 10 giây
-                                    </p>
-                                </div>
+                               
                             </>
                         )}
                     </CardContent>

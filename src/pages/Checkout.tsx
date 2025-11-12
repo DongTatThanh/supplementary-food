@@ -105,10 +105,6 @@ const Checkout = () => {
                 ...(appliedDiscount && { discount_code: appliedDiscount.code })
             };
             
-            console.log('📤 Sending Order Data to Backend:', orderData);
-            console.log('🎫 Applied Discount:', appliedDiscount);
-            console.log('💳 Discount Code:', appliedDiscount?.code);
-            
             const result = await orderService.createOrder(orderData);
             
             if (result.success && result.data) {

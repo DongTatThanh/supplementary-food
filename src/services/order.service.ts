@@ -74,6 +74,16 @@ export class OrderService {
             return null;
         }
     }
+
+    // Hủy đơn hàng
+    async cancelOrder(orderId: number): Promise<void> {
+        try {
+            await apiClient.patch(`/orders/${orderId}/cancel`);
+        } catch (error: any) {
+            console.error('Lỗi hủy đơn hàng:', error);
+            throw new Error(error.response?.data?.message || 'Không thể hủy đơn hàng');
+        }
+    }
 }
 
 export default new OrderService();

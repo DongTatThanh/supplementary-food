@@ -90,6 +90,15 @@ class ApiClient {
     });
   }
 
+  // PATCH request
+  async patch<T>(endpoint: string, data?: any, headers?: Record<string, string>): Promise<T> {
+    return this.request<T>(endpoint, {
+      method: 'PATCH',
+      body: data ? JSON.stringify(data) : undefined,
+      headers,
+    });
+  }
+
   // DELETE request
   async delete<T>(endpoint: string, headers?: Record<string, string>): Promise<T> {
     return this.request<T>(endpoint, { method: 'DELETE', headers });
@@ -503,6 +512,11 @@ export interface Order {
     order_number: string;
     user_id: number;
     total_amount: string;
+    subtotal: string;
+    discount_amount: string;
+    
+    discount_code?: string;
+    shipping_fee?: string;
     status: OrderStatus;
     payment_method: 'cod' | 'bank_transfer' | 'momo' | 'vnpay';
     payment_status: string;

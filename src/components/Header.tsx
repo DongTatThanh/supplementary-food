@@ -60,9 +60,14 @@ const Header = () => {
     navigate('/');
   };
 
+  // Icon giỏ hàng - vào trang Cart
   const handleCartClick = () => {
-    if (user && (user as any).id) navigate(`/cart/${(user as any).id}`);
-    else navigate('/cart');
+    navigate('/cart');
+  };
+
+
+  const handleMyOrdersClick = () => {
+    navigate('/order');
   };
 
   const handleToolTTDEClick = () => {
@@ -130,7 +135,7 @@ const Header = () => {
                     <User className="mr-2 h-4 w-4" />
                     <span>Thông tin cá nhân</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleCartClick}>
+                  <DropdownMenuItem onClick={handleMyOrdersClick}>
                     <ShoppingCart className="mr-2 h-4 w-4" />
                     <span>Đơn hàng của tôi</span>
                   </DropdownMenuItem>

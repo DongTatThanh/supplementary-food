@@ -39,7 +39,8 @@ const App = () => (
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/payment/:orderNumber" element={<PaymentPage />} />
-          <Route path="/order/:orderNumber" element={<OrderDetail />} />
+          <Route path="/order" element={<OrderDetail />} /> {/* Danh sách đơn hàng */}
+          <Route path="/order/:orderNumber" element={<OrderDetail />} /> {/* Chi tiết đơn hàng */}
           <Route path="/FlashSale" element={<FlashSalePage />} />
           <Route path="/ToolTTDE" element={<ToolTTDE />} />
           <Route path="/ToolBMI" element={<ToolBMI />} />
