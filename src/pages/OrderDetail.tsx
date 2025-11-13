@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, Package, MapPin, Clock, CheckCircle, Eye, XCircle } from 'lucide-react';
 import { getImageUrl } from '@/lib/api-client';
 import { useToast } from '@/hooks/use-toast';
+import { Textarea } from '@/components/ui/textarea';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -68,12 +69,13 @@ const OrderDetail = () => {
         
         setCancelling(true);
         try {
-            await orderService.cancelOrder(order.id);
+            await orderService.cancelOrder(order.id, cancelReason);
             toast({
                 title: "Hủy đơn hàng thành công",
                 description: `Đơn hàng ${order.order_number} đã được hủy`,
             });
             setShowCancelDialog(false);
+            setCancelReason(''); // Reset reason
             // Reload order để cập nhật trạng thái
             loadOrderDetail();
         } catch (error: any) {
@@ -488,8 +490,24 @@ const OrderDetail = () => {
                             Hành động này không thể hoàn tác.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
+                    
+                    <div className="py-4">
+                        <label className="text-sm font-medium mb-2 block">
+                            Lý do hủy đơn (tùy chọn):
+                        </label>
+                        <Textarea
+                            placeholder="Ví dụ: Đặt nhầm sản phẩm, Tìm được giá rẻ hơn, Không cần nữa..."
+                            value={cancelReason}
+                            onChange={(e) => setCancelReason(e.target.value)}
+                            rows={3}
+                            className="resize-none"
+                        />
+                    </div>
+                    
                     <AlertDialogFooter>
-                        <AlertDialogCancel>Không, giữ đơn hàng</AlertDialogCancel>
+                        <AlertDialogCancel onClick={() => setCancelReason('')}>
+                            Không, giữ đơn hàng
+                        </AlertDialogCancel>
                         <AlertDialogAction
                             onClick={handleCancelOrder}
                             disabled={cancelling}

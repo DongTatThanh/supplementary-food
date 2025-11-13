@@ -7,12 +7,14 @@ import Banner from "@/components/Banner";
 import PriceFilterproducts from "@/components/PriceFilterproducts";
 import BrandFilter from "@/components/BrandFilter";
 import { ProductSort } from "@/components/ProductSort";
+import RecentlyViewedProducts from "@/components/RecentlyViewedProducts";
 
 const flashSaleService = new FlashSaleService();
 
 const FlashSalePage = () => {
   const [flashSale, setFlashSale] = useState<FlashSaleInfo | null>(null);
   const [products, setProducts] = useState<FlashSaleProduct[]>([]);
+  const [displayCount, setDisplayCount] = useState(12); // Hiển thị 12 sản phẩm ban đầu
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [minPrice, setMinPrice] = useState<number | null>(null);
@@ -256,35 +258,49 @@ const FlashSalePage = () => {
                 <p className="text-red-600">{error}</p>
               </div>
             ) : products.length > 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                {products.map((item) => {
-                  if (!item || !item.flash_sale) return null;
+              <>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {products.slice(0, displayCount).map((item) => {
+                    if (!item || !item.flash_sale) return null;
 
-                  const productData = {
-                    id: item.id,
-                    name: item.name,
-                    slug: item.slug,
-                    featured_image: item.featured_image,
-                    image_url: item.featured_image,
-                    brand: item.brand,
-                    category: item.category,
-                    price: item.flash_sale.original_price,
-                    sale_price: item.flash_sale.sale_price,
-                    compare_price: null,
-                    discount_percentage: item.flash_sale.discount_percent,
-                    is_on_sale: 1,
-                    inventory_quantity: item.flash_sale.remaining
-                  };
+                    const productData = {
+                      id: item.id,
+                      name: item.name,
+                      slug: item.slug,
+                      featured_image: item.featured_image,
+                      image_url: item.featured_image,
+                      brand: item.brand,
+                      category: item.category,
+                      price: item.flash_sale.original_price,
+                      sale_price: item.flash_sale.sale_price,
+                      compare_price: null,
+                      discount_percentage: item.flash_sale.discount_percent,
+                      is_on_sale: 1,
+                      inventory_quantity: item.flash_sale.remaining
+                    };
 
-                  return (
-                    <ProductCard
-                      key={item.id}
-                      product={productData}
-                      soldQuantity={item.flash_sale.sold_quantity}
-                    />
-                  );
-                })}
-              </div>
+                    return (
+                      <ProductCard
+                        key={item.id}
+                        product={productData}
+                        soldQuantity={item.flash_sale.sold_quantity}
+                      />
+                    );
+                  })}
+                </div>
+                
+                {/* Nút Xem thêm */}
+                {displayCount < products.length && (
+                  <div className="flex justify-center mt-8">
+                    <button
+                      onClick={() => setDisplayCount(prev => prev + 12)}
+                      className="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors"
+                    >
+                      Xem thêm ({products.length - displayCount} sản phẩm)
+                    </button>
+                  </div>
+                )}
+              </>
             ) : (
               <div className="text-center py-12 bg-white rounded-lg">
                 <p className="text-gray-600">Không có sản phẩm nào phù hợp với bộ lọc</p>
@@ -292,6 +308,9 @@ const FlashSalePage = () => {
             )}
           </div>
         </div>
+
+        {/* Recently Viewed Products */}
+        <RecentlyViewedProducts />
       </div>
     </div>
   );

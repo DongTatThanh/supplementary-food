@@ -76,9 +76,9 @@ export class OrderService {
     }
 
     // Hủy đơn hàng
-    async cancelOrder(orderId: number): Promise<void> {
+    async cancelOrder(orderId: number, reason?: string): Promise<void> {
         try {
-            await apiClient.patch(`/orders/${orderId}/cancel`);
+            await apiClient.patch(`/orders/${orderId}/cancel`, { reason });
         } catch (error: any) {
             console.error('Lỗi hủy đơn hàng:', error);
             throw new Error(error.response?.data?.message || 'Không thể hủy đơn hàng');

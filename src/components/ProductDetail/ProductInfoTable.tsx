@@ -41,12 +41,7 @@ export const ProductInfoTable = ({ product, selectedVariant }: ProductInfoTableP
               </TableRow>
             )}
 
-            <TableRow className="bg-gray-50">
-              <TableCell className="font-semibold">Số lần dùng</TableCell>
-              <TableCell>
-                16 <span className="text-blue-600 hover:underline cursor-pointer">lần dùng</span>
-              </TableCell>
-            </TableRow>
+           
 
             {selectedVariant?.flavor && (
               <TableRow>

@@ -15,8 +15,8 @@ import { Badge } from '@/components/ui/badge';
 // Import các component con
 import { ProductImageGallery } from '@/components/ProductDetail/ProductImageGallery';
 import { ProductVariantSelector } from '@/components/ProductDetail/ProductVariantSelector';
-import { DiscountCodeList } from '@/components/ProductDetail/DiscountCodeList';
 import { ProductTabs } from '@/components/ProductDetail/ProductTabs';
+import RecentlyViewedProducts from '@/components/RecentlyViewedProducts';
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -49,6 +49,9 @@ const ProductDetail = () => {
             const defaultVariant = response.variants.find((v: ProductVariant) => v.is_default === 1) || response.variants[0];
             setSelectedVariant(defaultVariant);
           }
+
+          // Backend tự động track view khi gọi GET /products/:id
+          // Không cần gọi POST /product-views nữa
         }
       } catch (error) {
         console.error('Error fetching product:', error);
@@ -340,7 +343,11 @@ const ProductDetail = () => {
 
         {/* Component: Product Tabs */}
         <ProductTabs product={product} selectedVariant={selectedVariant} />
+
+        {/* Component: Recently Viewed Products */}
+        
       </div>
+      <RecentlyViewedProducts />
     </div>
     </div>
     

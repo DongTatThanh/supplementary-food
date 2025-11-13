@@ -9,9 +9,11 @@ import PriceFilterproducts from '../components/PriceFilterproducts';
 import BrandFilter from '../components/BrandFilter';
 import PriceRangesService from '@/services/priceRanges.service';
 import { ProductSort } from '@/components/ProductSort';
+import RecentlyViewedProducts from '@/components/RecentlyViewedProducts';
 
 const ProductByCategory = () => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [displayCount, setDisplayCount] = useState(12); // Hiển thị 12 sản phẩm ban đầu
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [category, setCategory] = useState<Category | null>(null);
@@ -171,12 +173,27 @@ const ProductByCategory = () => {
 
             {/* Products Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-              {products.map((product) => (
+              {products.slice(0, displayCount).map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>
+
+            {/* Nút Xem thêm */}
+            {displayCount < products.length && (
+              <div className="flex justify-center mt-8">
+                <button
+                  onClick={() => setDisplayCount(prev => prev + 12)}
+                  className="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors"
+                >
+                  Xem thêm ({products.length - displayCount} sản phẩm)
+                </button>
+              </div>
+            )}
           </div>
         </div>
+
+        {/* Recently Viewed Products */}
+        <RecentlyViewedProducts />
       </div>
     </div>
   );
