@@ -36,23 +36,42 @@ const Header = () => {
 
   useEffect(() => {
     // Refresh auth state khi component mount
-    setUser(AuthService.getCurrentUser());
-    setIsAuthenticated(AuthService.isAuthenticated());
-    
-    // Listen for storage changes (khi login/logout từ tab khác)
-    const handleStorageChange = () => {
+    const refreshAuthState = () => {
       setUser(AuthService.getCurrentUser());
       setIsAuthenticated(AuthService.isAuthenticated());
     };
     
+    refreshAuthState();
+    
+    // Listen for storage changes (khi login/logout từ tab khác)
+    const handleStorageChange = () => {
+      refreshAuthState();
+    };
+    
+    // Listen for custom auth events (khi login/logout trong cùng tab)
+    const handleAuthChange = () => {
+      refreshAuthState();
+    };
+    
     window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
+    window.addEventListener('auth:login', handleAuthChange);
+    window.addEventListener('auth:logout', handleAuthChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('auth:login', handleAuthChange);
+      window.removeEventListener('auth:logout', handleAuthChange);
+    };
   }, []);
 
   const handleLogout = () => {
     AuthService.logout();
     setUser(null);
     setIsAuthenticated(false);
+    
+    // Dispatch event để các component khác biết đã logout
+    window.dispatchEvent(new CustomEvent('auth:logout'));
+    
     toast({
       title: "Đăng xuất thành công",
       description: "Hẹn gặp lại bạn!",

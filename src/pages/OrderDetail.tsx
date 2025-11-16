@@ -43,7 +43,6 @@ const OrderDetail = () => {
             const data = await orderService.getUserOrders();
             setOrders(data);
         } catch (error) {
-            console.error('Error loading orders:', error);
         } finally {
             setLoading(false);
         }
@@ -54,10 +53,25 @@ const OrderDetail = () => {
         if (!orderNumber) return;
         
         try {
-            const data = await orderService.getOrderByNumber(orderNumber);
+            // Kiểm tra xem orderNumber là ID (số) hay order_number (string như "FN123")
+            const isNumeric = /^\d+$/.test(orderNumber);
+            let data;
+            
+            if (isNumeric) {
+                // Nếu là số, tìm theo ID
+                data = await orderService.getOrderById(parseInt(orderNumber));
+            } else {
+                // Nếu không phải số, tìm theo order_number
+                data = await orderService.getOrderByNumber(orderNumber);
+            }
+            
             setOrder(data);
         } catch (error) {
-            console.error('Error loading order:', error);
+            toast({
+                title: "Lỗi",
+                description: "Không thể tải thông tin đơn hàng",
+                variant: "destructive"
+            });
         } finally {
             setLoading(false);
         }
@@ -76,13 +90,17 @@ const OrderDetail = () => {
             });
             setShowCancelDialog(false);
             setCancelReason(''); // Reset reason
-            // Reload order để cập nhật trạng thái
-            loadOrderDetail();
+            
+            // Chuyển về danh sách đơn hàng sau khi hủy thành công
+            setTimeout(() => {
+                navigate('/order');
+            }, 1000); // Đợi 1 giây để user thấy thông báo
         } catch (error: any) {
             toast({
                 title: "Không thể hủy đơn hàng",
-                description: error.message || "Vui lòng thử lại sau",
-                variant: "destructive"
+                description: error.message || "Có lỗi xảy ra. Vui lòng thử lại sau hoặc liên hệ hỗ trợ.",
+                variant: "destructive",
+                duration: 5000
             });
         } finally {
             setCancelling(false);

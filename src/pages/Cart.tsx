@@ -29,7 +29,6 @@ const CartPage: React.FC = () => {
             const cartData = await cartService.getUserCart();
             setCart(cartData);
         } catch (err) {
-            console.error(err);
             setError('Không thể tải giỏ hàng');
         } finally {
             setLoading(false);

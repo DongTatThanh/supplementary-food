@@ -40,7 +40,6 @@ export class PriceRangesService {
             
             return response.data || [];
         } catch (error) {
-            console.error('lỗi tải data:', error);
             return [];
         }
     }

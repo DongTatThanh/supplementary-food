@@ -22,20 +22,21 @@ class ApiClient {
   ): Promise<T> {
     const url = `${this.baseURL}${endpoint}`;
     
-    const config: RequestInit = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...options.headers,
-      },
-      ...options,
+    const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
+    
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+      ...(options.headers as Record<string, string>),
     };
+    
+    if (token) {
+      (headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
+    }
 
-    console.log('API Request:', {
-      url,
-      method: config.method || 'GET',
-      headers: config.headers,
-      body: config.body
-    });
+    const config: RequestInit = {
+      ...options,
+      headers,
+    };
 
     try {
       const controller = new AbortController();
@@ -49,13 +50,26 @@ class ApiClient {
       clearTimeout(timeoutId);
       
       if (!response.ok) {
+        // Xử lý lỗi 401 (Unauthorized) - Token hết hạn
+        if (response.status === 401) {
+          // Clear token và user info
+          if (typeof window !== 'undefined') {
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('user');
+            
+            // Dispatch custom event để các component khác có thể lắng nghe
+            window.dispatchEvent(new CustomEvent('auth:expired', {
+              detail: { message: 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.' }
+            }));
+          }
+        }
+        
         const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
         throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
       }
 
       return await response.json();
     } catch (error) {
-      console.error('API Request failed:', error);
       throw error;
     }
   }
@@ -67,13 +81,9 @@ class ApiClient {
 
   // POST request
   async post<T>(endpoint: string, data?: any, headers?: Record<string, string>): Promise<T> {
-    console.log('POST request data before stringify:', data);
-    const bodyString = data ? JSON.stringify(data) : undefined;
-    console.log('POST request body string:', bodyString);
-    
     return this.request<T>(endpoint, {
       method: 'POST',
-      body: bodyString,
+      body: data ? JSON.stringify(data) : undefined,
       headers: {
         'Content-Type': 'application/json',
         ...headers,

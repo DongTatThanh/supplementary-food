@@ -17,6 +17,7 @@ import Checkout from "./pages/Checkout";
 import PaymentPage from "./pages/PaymentPage";
 import OrderDetail from "./pages/OrderDetail";
 import FloatingContactButton from "./components/contact/FloatingContactButton";
+import AuthExpiredHandler from "./components/AuthExpiredHandler";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,8 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        {/* Handler xử lý token hết hạn */}
+        <AuthExpiredHandler />
         {/* Floating Contact Button - hiển thị trên tất cả trang */}
         <FloatingContactButton />
         

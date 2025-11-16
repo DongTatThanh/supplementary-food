@@ -19,7 +19,6 @@
           setDiscountCodes(response);
           setError(null);
         } catch (err) {
-          console.error('Error:', err);
           const errorMessage = err instanceof Error ? err.message : 'Có lỗi xảy ra';
           setError(errorMessage);
         } finally {

@@ -17,7 +17,6 @@ export class ProductViewService {
         try {
             await apiClient.post('/product-views', { product_id: productId });
         } catch (error) {
-            console.error('Lỗi ghi nhận lượt xem:', error);
             // Không throw error để không ảnh hưởng UX
         }
     }
@@ -30,7 +29,6 @@ export class ProductViewService {
             );
             return response.data || [];
         } catch (error) {
-            console.error('Lỗi tải lịch sử xem:', error);
             return [];
         }
     }
@@ -40,7 +38,6 @@ export class ProductViewService {
         try {
             await apiClient.delete('/product-views');
         } catch (error) {
-            console.error('Lỗi xóa lịch sử xem:', error);
             throw error;
         }
     }

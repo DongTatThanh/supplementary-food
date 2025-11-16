@@ -74,7 +74,6 @@ const ProductByCategory = () => {
         setProducts(products);
         setError(null);
       } catch (err) {
-        console.error('lỗi :', err);
         setError('Không thể tải sản phẩm theo filter');
       } finally {
         setLoading(false);
@@ -97,7 +96,6 @@ const ProductByCategory = () => {
       );
       setProducts(products || []);
     } catch (err) {
-      console.error('lỗi :', err);
       setError('Không thể tải sản phẩm theo sắp xếp');
     } finally {
       setLoading(false);
@@ -121,7 +119,6 @@ const ProductByCategory = () => {
         setProducts(products);
         setError(null);
       } catch (err) {
-        console.error('lỗi :', err);
         setError('Không thể tải sản phẩm theo brand');
       } finally {
         setLoading(false);

@@ -12,7 +12,6 @@ export class PaymentService {
                 data: response
             };
         } catch (error: any) {
-            console.error('Lỗi tạo thông tin thanh toán:', error);
             return {
                 success: false,
                 message: error.response?.data?.message || 'Không thể tạo thông tin thanh toán'
@@ -26,7 +25,6 @@ export class PaymentService {
             const response = await apiClient.get<TransactionStatus>(`/payment/check/${orderNumber}`);
             return response;
         } catch (error: any) {
-            console.error('Lỗi kiểm tra trạng thái thanh toán:', error);
             return {
                 success: false,
                 message: error.response?.data?.message || 'Không thể kiểm tra trạng thái thanh toán'
@@ -40,7 +38,6 @@ export class PaymentService {
             const response = await apiClient.get<any>('/payment/transactions');
             return response;
         } catch (error: any) {
-            console.error('Lỗi lấy danh sách giao dịch:', error);
             return {
                 success: false,
                 count: 0,
@@ -58,7 +55,6 @@ export class PaymentService {
             });
             return response;
         } catch (error: any) {
-            console.error('Lỗi xác nhận thanh toán thủ công:', error);
             return {
                 success: false,
                 message: error.response?.data?.message || 'Không thể xác nhận thanh toán thủ công'

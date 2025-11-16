@@ -25,7 +25,6 @@ const Footer = () => {
       setError(null);
       setFetched(true);
     } catch (error) {
-      console.error("Lỗi tải dữ liệu cửa hàng:", error);
       setError("Không thể tải thông tin cửa hàng");
     } finally {
       setLoading(false);

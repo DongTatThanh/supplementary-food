@@ -51,7 +51,6 @@ const FlashSalePage = () => {
         }
       } catch (err) 
       {
-        console.error("Lỗi tải Flash Sale:", err);
         setError("Không thể tải sản phẩm Flash Sale");
       } finally {
         setLoading(false);
@@ -111,7 +110,6 @@ const FlashSalePage = () => {
           setProducts(validProducts);
         }
       } catch (err) {
-        console.error("Lỗi tải Flash Sale:", err);
         setError("Không thể tải sản phẩm Flash Sale");
       } finally {
         setLoading(false);
@@ -144,7 +142,6 @@ const FlashSalePage = () => {
           setProducts(validProducts);
         }
       } catch (err) {
-        console.error("Lỗi tải Flash Sale:", err);
         setError("Không thể tải sản phẩm Flash Sale");
       } finally {
         setLoading(false);
@@ -175,7 +172,6 @@ const FlashSalePage = () => {
         setProducts(validProducts || []);
       }
     } catch (err) {
-      console.error("Lỗi tải Flash Sale:", err);
       setError("Không thể tải sản phẩm Flash Sale");
     } finally {
       setLoading(false);

@@ -28,7 +28,6 @@ const CategoryDrawer = () => {
         const response = await productsService.getAllCategories();
         setCategories(response);
       } catch (err) {
-        console.error('lỖI LÁY api', err);
       } finally {
         setLoading(false);
       }

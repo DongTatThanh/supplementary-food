@@ -5,20 +5,28 @@ export class AuthService {
   // Register new user
   static async register(data: RegisterData): Promise<AuthResponse> {
     try {
-      console.log('AuthService.register called with:', data);
-      console.log('Data type check:', typeof data, Object.keys(data));
       const response = await apiClient.post<{access_token: string}>('/auth/register', data);
       
       if (response.access_token) {
         // Store token
         localStorage.setItem('auth_token', response.access_token);
         
-        // Create basic user object from email
+        // Decode JWT để lấy real user_id
+        let userId = Date.now(); // Fallback
+        try {
+          const payload = JSON.parse(atob(response.access_token.split('.')[1]));
+          userId = payload.sub || payload.id || payload.userId || Date.now();
+        } catch (e) {
+          // Ignore JWT decode errors
+        }
+        
+        // Create user object với real user_id
         const user: User = { 
           email: data.email, 
-          id: Date.now(),
+          id: userId,
           username: data.email.split('@')[0]
         };
+        
         localStorage.setItem('user', JSON.stringify(user));
         
         return {
@@ -30,7 +38,6 @@ export class AuthService {
         throw new Error('Registration failed - no token received');
       }
     } catch (error) {
-      console.error('Registration error:', error);
       throw error;
     }
   }
@@ -44,12 +51,22 @@ export class AuthService {
         // Store token
         localStorage.setItem('auth_token', response.access_token);
         
-        // Create basic user object from email
+        // Decode JWT để lấy real user_id
+        let userId = Date.now(); // Fallback
+        try {
+          const payload = JSON.parse(atob(response.access_token.split('.')[1]));
+          userId = payload.sub || payload.id || payload.userId || Date.now();
+        } catch (e) {
+          // Ignore JWT decode errors
+        }
+        
+        // Create user object với real user_id
         const user: User = { 
           email: data.email, 
-          id: Date.now(),
+          id: userId,
           username: data.email.split('@')[0]
         };
+        
         localStorage.setItem('user', JSON.stringify(user));
         
         return {
@@ -61,7 +78,6 @@ export class AuthService {
         throw new Error('Login failed - no token received');
       }
     } catch (error) {
-      console.error('Login error:', error);
       throw error;
     }
   }
@@ -77,11 +93,9 @@ export class AuthService {
           'Authorization': `Bearer ${token}`
         }).catch(() => {
           // Ignore errors on logout API call
-          console.log('Logout API call failed, continuing with local logout');
         });
       }
     } catch (error) {
-      console.error('Logout error:', error);
     } finally {
       // Always clear local storage
       localStorage.removeItem('auth_token');
@@ -95,7 +109,6 @@ export class AuthService {
       const userStr = localStorage.getItem('user');
       return userStr ? JSON.parse(userStr) : null;
     } catch (error) {
-      console.error('Error getting current user:', error);
       return null;
     }
   }
@@ -115,13 +128,10 @@ export class AuthService {
   // Verify OTP for password reset
   static async verifyOtp(email: string, otp: string): Promise<boolean> {
     try {
-      console.log('Verifying OTP:', { email, otp });
       const response = await apiClient.post<{success: boolean, message?: string}>('/auth/verify-otp', {
         email,
         otp
       });
-
-      console.log('Verify OTP response:', response);
       
       // Handle different response formats from backend
       if (typeof response === 'boolean') {
@@ -134,7 +144,6 @@ export class AuthService {
       
       return true; // If we get here without errors, assume success
     } catch (error) {
-      console.error('OTP verification error:', error);
       throw error;
     }
   }
@@ -142,15 +151,12 @@ export class AuthService {
   // Send forgot password OTP
   static async sendForgotPasswordOtp(email: string): Promise<boolean> {
     try {
-      console.log('Sending forgot password OTP to:', email);
       const response = await apiClient.post<{success: boolean, message?: string}>('/auth/forgot-password', {
         email
       });
 
-      console.log('Send OTP response:', response);
       return response.success !== false; // If success is not explicitly false, consider it true
     } catch (error) {
-      console.error('Send OTP error:', error);
       throw error;
     }
   }
@@ -158,13 +164,10 @@ export class AuthService {
   // Reset password with OTP token
   static async resetPassword(email: string, otpToken: string, newPassword: string): Promise<boolean> {
     try {
-      console.log('Resetting password for:', email, 'with OTP:', otpToken);
       const response = await apiClient.post<{success: boolean, message?: string}>('/auth/reset-password', {
         otp: otpToken,
         newPassword: newPassword
       });
-
-      console.log('Reset password response:', response);
       
       // Handle different response formats from backend
       if (typeof response === 'boolean') {
@@ -177,7 +180,6 @@ export class AuthService {
       
       return true; // If we get here without errors, assume success
     } catch (error) {
-      console.error('Reset password error:', error);
       throw error;
     }
   }

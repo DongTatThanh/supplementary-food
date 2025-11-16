@@ -26,14 +26,13 @@ export class OrderService {
     // Tạo đơn hàng mới
     async createOrder(orderData: CreateOrderDto): Promise<{ success: boolean; message: string; data?: Order }> {
         try {
-            const response = await apiClient.post<Order>('/orders', orderData);
+            const response = await apiClient.post<Order>('/api/orders', orderData);
             return {
                 success: true,
                 message: 'Đã tạo đơn hàng thành công',
                 data: response
             };
         } catch (error: any) {
-            console.error('Lỗi tạo đơn hàng:', error);
             return {
                 success: false,
                 message: error.response?.data?.message || 'Không thể tạo đơn hàng'
@@ -44,11 +43,10 @@ export class OrderService {
     // Lấy danh sách đơn hàng
     async getUserOrders(status?: OrderStatus): Promise<Order[]> {
         try {
-            const endpoint = status ? `/orders?status=${status}` : '/orders';
+            const endpoint = status ? `/api/orders?status=${status}` : '/api/orders';
             const response = await apiClient.get<Order[]>(endpoint);
             return response || [];
         } catch (error) {
-            console.error('Lỗi tải đơn hàng:', error);
             return [];
         }
     }
@@ -56,10 +54,9 @@ export class OrderService {
     // Lấy chi tiết đơn hàng theo ID
     async getOrderById(orderId: number): Promise<Order | null> {
         try {
-            const response = await apiClient.get<Order>(`/orders/${orderId}`);
+            const response = await apiClient.get<Order>(`/api/orders/${orderId}`);
             return response;
         } catch (error) {
-            console.error('Lỗi tải đơn hàng:', error);
             return null;
         }
     }
@@ -67,10 +64,9 @@ export class OrderService {
     // Lấy đơn hàng theo order_number
     async getOrderByNumber(orderNumber: string): Promise<Order | null> {
         try {
-            const response = await apiClient.get<Order>(`/orders/number/${orderNumber}`);
+            const response = await apiClient.get<Order>(`/api/orders/number/${orderNumber}`);
             return response;
         } catch (error) {
-            console.error('Lỗi tải đơn hàng:', error);
             return null;
         }
     }
@@ -78,10 +74,20 @@ export class OrderService {
     // Hủy đơn hàng
     async cancelOrder(orderId: number, reason?: string): Promise<void> {
         try {
-            await apiClient.patch(`/orders/${orderId}/cancel`, { reason });
+            // Thử dùng POST thay vì PATCH để tránh lỗi CORS
+            // Nếu backend không hỗ trợ POST, có thể thử PUT
+            await apiClient.post(`/api/orders/${orderId}/cancel`, { reason });
         } catch (error: any) {
-            console.error('Lỗi hủy đơn hàng:', error);
-            throw new Error(error.response?.data?.message || 'Không thể hủy đơn hàng');
+            // Kiểm tra nếu là lỗi CORS, thử dùng PUT
+            if (error.message?.includes('CORS') || error.message?.includes('Failed to fetch')) {
+                try {
+                    await apiClient.put(`/api/orders/${orderId}/cancel`, { reason });
+                } catch (putError: any) {
+                    throw new Error(putError.response?.data?.message || 'Không thể hủy đơn hàng. Vui lòng liên hệ hỗ trợ.');
+                }
+            } else {
+                throw new Error(error.response?.data?.message || error.message || 'Không thể hủy đơn hàng. Vui lòng thử lại sau.');
+            }
         }
     }
 }

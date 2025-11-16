@@ -16,7 +16,6 @@ const BrandShowcase = () => {
      
         setBrands(data);
       } catch (error) {
-        console.error(" Lỗi tải data thương hiệu:", error);
       } finally {
         setLoading(false);
       }

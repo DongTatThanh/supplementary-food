@@ -19,7 +19,6 @@ const RecentlyViewedProducts = () => {
             const history = await productViewService.getUserViewHistory(6); // Lấy 6 sản phẩm
             setViewHistory(history);
         } catch (error) {
-            console.error('Error loading view history:', error);
         } finally {
             setLoading(false);
         }

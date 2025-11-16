@@ -59,7 +59,6 @@ const Checkout = () => {
             const codes = await discountService.getActiveCodes();
             setAvailableCodes(codes.slice(0, 5)); 
         } catch (error) {
-            console.error('Lỗi tải mã giảm giá:', error);
         }
     };
 
@@ -113,8 +112,11 @@ const Checkout = () => {
                     description: `Mã đơn hàng: ${result.data.order_number}`,
                 });
                 
-                // Chuyển sang trang thanh toán
-                navigate(`/payment/${result.data.order_number}`);
+                // Save order to sessionStorage for payment page
+                sessionStorage.setItem('pending_order', JSON.stringify(result.data));
+                
+                // Chuyển sang trang thanh toán với ID (integer)
+                navigate(`/payment/${result.data.id}`);
             } else {
                 toast({
                     title: "Lỗi",

@@ -44,7 +44,7 @@ export default function AddressSelect({
         fetch("https://provinces.open-api.vn/api/?depth=1")
             .then((res) => res.json())
             .then((data) => setProvinces(data))
-            .catch((error) => console.error('Error loading provinces:', error));
+            .catch(() => {});
     }, []);
 
     // load danh sách quận huyện 
@@ -62,7 +62,7 @@ export default function AddressSelect({
                 setSelectedDistrict(""); // Reset district khi đổi tỉnh
                 setWards([]);
             })
-            .catch((error) => console.error('Error loading districts:', error));
+            .catch(() => {});
     }, [selectedProvince]);
 
     // load danh sách phường xã 
@@ -78,7 +78,7 @@ export default function AddressSelect({
                 setWards(data.wards || []);
                 setSelectedWard(""); // Reset ward khi đổi quận
             })
-            .catch((error) => console.error('Error loading wards:', error));
+            .catch(() => {});
     }, [selectedDistrict]);
 
     const handleProvinceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {

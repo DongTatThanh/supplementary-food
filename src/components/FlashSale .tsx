@@ -45,7 +45,6 @@ const navigate = useNavigate();
           setProducts(validProducts);
         }
       } catch (error) {
-        console.error(" Lỗi tải Flash Sale:", error);
       } finally {
         setLoading(false);
       }

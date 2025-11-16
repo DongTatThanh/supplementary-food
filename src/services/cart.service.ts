@@ -11,9 +11,13 @@ interface AddToCartPayload {
 }
 
 interface AddToCartResponse {
-    items: any[];
-    total: number;
-    itemCount: number;
+    success?: boolean;
+    message?: string;
+    data?: {
+        items: any[];
+        total: number;
+        itemCount: number;
+    };
 }
 
 export class CartService {
@@ -21,22 +25,29 @@ export class CartService {
     // Lấy giỏ hàng của người dùng 
     async getUserCart(): Promise<Cart | null> {
         try {
-            // Backend returns array with single cart object
-            const response = await apiClient.get<Cart[]>('/cart');
+            const response = await apiClient.get<any>('/cart');
             
-            if (response && Array.isArray(response) && response.length > 0) {
-                return response[0];
+            // Backend returns {success, message, data: {items, total, itemCount}}
+            if (response && response.success && response.data) {
+                const { items, total, itemCount } = response.data;
+                
+                return {
+                    id: 0,
+                    user_id: 0,
+                    items: items || [],
+                    total: total || 0,
+                    itemCount: itemCount || 0
+                } as Cart;
             }
             
             return null;
-        } catch (error) {
-            console.error('lỗi tải data giỏ hàng ', error);
+        } catch (error: any) {
             return null;
         }
     }
 
     // Thêm sản phẩm vào giỏ hàng
-    async addToCart(productId: number, quantity: number = 1, variant?: number): Promise<{ success: boolean; message: string; data?: AddToCartResponse }> {
+    async addToCart(productId: number, quantity: number = 1, variant?: number): Promise<{ success: boolean; message: string; data?: any }> {
         try {
             const payload: AddToCartPayload = {
                 product_id: productId,
@@ -47,15 +58,22 @@ export class CartService {
                 payload.variant = variant;
             }
 
-            const response = await apiClient.post<AddToCartResponse>('/cart/items', payload);
+            const response = await apiClient.post<any>('/cart/items', payload);
+
+            // Backend returns {success, message, data: {...}}
+            if (response && response.success) {
+                return {
+                    success: true,
+                    message: response.message || 'Đã thêm sản phẩm vào giỏ hàng',
+                    data: response.data
+                };
+            }
 
             return {
-                success: true,
-                message: 'Đã thêm sản phẩm vào giỏ hàng',
-                data: response
+                success: false,
+                message: response?.message || 'Không thể thêm vào giỏ hàng'
             };
         } catch (error: any) {
-            console.error('Lỗi thêm vào giỏ hàng:', error);
             return {
                 success: false,
                 message: error.response?.data?.message || 'Không thể thêm vào giỏ hàng'
@@ -73,7 +91,6 @@ export class CartService {
                 message: 'Đã cập nhật số lượng'
             };
         } catch (error: any) {
-            console.error('Lỗi cập nhật giỏ hàng:', error);
             return {
                 success: false,
                 message: error.response?.data?.message || 'Không thể cập nhật'
@@ -90,7 +107,6 @@ export class CartService {
                 message: 'Đã xóa sản phẩm khỏi giỏ hàng'
             };
         } catch (error: any) {
-            console.error('Lỗi xóa khỏi giỏ hàng:', error);
             return {
                 success: false,
                 message: error.response?.data?.message || 'Không thể xóa'
@@ -107,7 +123,6 @@ export class CartService {
                 message: 'Đã xóa toàn bộ giỏ hàng'
             };
         } catch (error: any) {
-            console.error('Lỗi xóa giỏ hàng:', error);
             return {
                 success: false,
                 message: error.response?.data?.message || 'Không thể xóa giỏ hàng'

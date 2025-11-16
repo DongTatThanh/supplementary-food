@@ -52,9 +52,10 @@ type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
 
 interface AuthFormProps {
   onClose?: () => void;
+  redirect?: string;
 }
 
-export function AuthForm({ onClose }: AuthFormProps) {
+export function AuthForm({ onClose, redirect = '/' }: AuthFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -98,15 +99,19 @@ export function AuthForm({ onClose }: AuthFormProps) {
         email: data.email,
         password: data.password
       });
+      
+      // Dispatch event để Header và các component khác cập nhật
+      window.dispatchEvent(new CustomEvent('auth:login', {
+        detail: { user: result.user }
+      }));
+      
       toast({
         title: "Đăng nhập thành công!",
         description: `Chào mừng ${result.user?.email || 'bạn'} quay lại!`,
       });
       
-      // Chuyển hướng về trang chính sau 1 giây
-      setTimeout(() => {
-        navigate('/');
-      }, 1000);
+      // Redirect ngay lập tức (không đợi 1 giây)
+      navigate(redirect);
       
       onClose?.();
     } catch (error: any) {
@@ -123,10 +128,6 @@ export function AuthForm({ onClose }: AuthFormProps) {
   const onRegister = async (data: RegisterFormData) => {
     setIsLoading(true);
     try {
-      console.log('Form data received:', data);
-      console.log('Email length:', data.email.length, 'Email:', data.email);
-      console.log('Password length:', data.password.length, 'Password:', data.password.substring(0, 3) + '***');
-      
       // Validate locally first
       if (!data.email || !data.email.includes('@')) {
         throw new Error('Email không hợp lệ');
@@ -141,13 +142,16 @@ export function AuthForm({ onClose }: AuthFormProps) {
         full_name: data.fullName.trim()
       };
       
-      console.log('Sending to API:', requestData);
       const result = await AuthService.register(requestData);
-      console.log('Registration result:', result);
+      
+      // Dispatch event để Header và các component khác cập nhật
+      window.dispatchEvent(new CustomEvent('auth:login', {
+        detail: { user: result.user }
+      }));
       
       toast({
         title: "Đăng ký thành công!",
-        description: `Tài khoản ${data.email} đã được tạo thành công! Đang chuyển về trang chính...`,
+        description: `Tài khoản ${data.email} đã được tạo! Đang chuyển...`,
       });
       
       // Chuyển hướng về trang chính sau 1.5 giây
@@ -157,7 +161,6 @@ export function AuthForm({ onClose }: AuthFormProps) {
       
       onClose?.();
     } catch (error: any) {
-      console.error('Registration error:', error);
       toast({
         title: "Lỗi đăng ký",
         description: error.message || "Có lỗi xảy ra, vui lòng thử lại",
@@ -183,7 +186,6 @@ export function AuthForm({ onClose }: AuthFormProps) {
       setShowOtpStep(true);
       
     } catch (error: any) {
-      console.error('Forgot password error:', error);
       toast({
         title: "Lỗi gửi email",
         description: error.message || "Có lỗi xảy ra, vui lòng thử lại",
@@ -224,7 +226,6 @@ export function AuthForm({ onClose }: AuthFormProps) {
       }
       
     } catch (error: any) {
-      console.error('OTP verification error:', error);
       toast({
         title: "Lỗi xác thực OTP",
         description: error.message || "Mã OTP không chính xác, vui lòng thử lại",
@@ -278,7 +279,6 @@ export function AuthForm({ onClose }: AuthFormProps) {
       }
       
     } catch (error: any) {
-      console.error('Reset password error:', error);
       toast({
         title: "Lỗi đặt lại mật khẩu",
         description: error.message || "Có lỗi xảy ra, vui lòng thử lại",

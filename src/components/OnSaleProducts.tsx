@@ -15,15 +15,12 @@ const OnSaleProducts = () => {
     const fetchOnSaleProducts = async () => {
       try {
         setLoading(true);
-        console.log('Fetching on-sale products...');
         
         const response = await productService.getOnSaleProducts();
-        console.log('On-sale products:', response);
         
         setProducts(response);
         setError(null);
       } catch (err) {
-        console.error('Error fetching on-sale products:', err);
         const errorMessage = err instanceof Error ? err.message : 'Không thể tải danh sách sản phẩm khuyến mại';
         setError(errorMessage);
       } finally {

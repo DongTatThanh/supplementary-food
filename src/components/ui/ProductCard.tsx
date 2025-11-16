@@ -3,6 +3,7 @@ import { ShoppingCart, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { CartService } from '@/services/cart.service';
+import { AuthService } from '@/services/auth.service';
 import { useToast } from '@/hooks/use-toast';
 
 interface ProductCardProps {
@@ -43,6 +44,17 @@ const ProductCard = ({ product, soldQuantity, categoryId }: ProductCardProps) =>
   // Handle thêm vào giỏ hàng
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.stopPropagation(); // Ngăn không cho navigate khi click vào button
+
+    // Check đăng nhập trước
+    if (!AuthService.isAuthenticated()) {
+      toast({
+        title: "Yêu cầu đăng nhập",
+        description: "Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng",
+        variant: "destructive",
+      });
+      navigate(`/auth?redirect=/product/${product.id}`);
+      return;
+    }
 
     if (!hasStock) {
       toast({

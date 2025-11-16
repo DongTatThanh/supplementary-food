@@ -24,7 +24,6 @@ const BrandFilter: React.FC<BrandFilterProps> = ({ onChange }) =>
         const brandsData = await brandService.getAllBrands();
         setBrands(brandsData); // lưu state
       } catch (error) {
-        console.error('Lỗi tải brands:', error);
       } finally {
         setLoading(false);
       }

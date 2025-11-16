@@ -13,7 +13,6 @@ export class ProductsService {
       const response = await apiClient.get<Product[]>('/products/on-sale');
       return Array.isArray(response) ? response : [];
     } catch (error) {
-      console.error('Error in getOnSaleProducts:', error);
       throw error;
     }
   }
@@ -24,7 +23,6 @@ export class ProductsService {
       const response = await apiClient.get<Product[]>('/products');
       return Array.isArray(response) ? response : [];
     } catch (error) {
-      console.error('Error in getAllProducts:', error);
       throw error;
     }
   }
@@ -34,30 +32,23 @@ export class ProductsService {
     try {
       const response = await apiClient.get<any>(`/categories/${categoryId}/products`);
       
-      console.log('Raw API response:', response);
-      
       // API trả về { id, name, products: [...] }
       if (response?.products && Array.isArray(response.products)) {
-        console.log('Returning products:', response.products.length, 'items');
         return response.products;
       }
       
     
       if (response?.data && Array.isArray(response.data)) {
-        console.log('Returning response.data');
         return response.data;
       }
       
       
       if (Array.isArray(response)) {
-        console.log('Returning response directly');
         return response;
       }
       
-      console.warn('Unexpected response format:', response);
       return [];
     } catch (error) {
-      console.error('Error in getProductsByCategory:', error);
       return [];
     }
   }
@@ -68,7 +59,6 @@ export class ProductsService {
       const response = await apiClient.get<Product[]>('/products/featured');
       return Array.isArray(response) ? response : [];
     } catch (error) {
-      console.error('Error in getFeaturedProducts:', error);
       throw error;
     }
   }
@@ -79,7 +69,6 @@ export class ProductsService {
       const response = await apiClient.get<Product[]>('/products/new-arrivals');
       return Array.isArray(response) ? response : [];
     } catch (error) {
-      console.error('Error in getNewArrivalProducts:', error);
       throw error;
     }
   }
@@ -90,7 +79,6 @@ export class ProductsService {
       const response = await apiClient.get<Product[]>('/products/bestsellers');
       return Array.isArray(response) ? response : [];
     } catch (error) {
-      console.error('Error in getBestsellerProducts:', error);
       throw error;
     }
   }
@@ -101,8 +89,7 @@ export class ProductsService {
       const response = await apiClient.get<ProductDetailData>(`/products/${productId}`);
       return response || null;
     } catch (error) {
-      console.error('Lỗi lấy getProductById:', error);
-      return ;
+      return null;
     } 
   }
   // lấy tất cả cac dnah mục category
@@ -111,7 +98,6 @@ export class ProductsService {
        const response = await apiClient.get<any[]>('/categories');
         return response || null;
     } catch (error) {
-      console.error('lỗi danh mục category:', error);
       return null;
     } 
     }
@@ -125,7 +111,6 @@ export class ProductsService {
            return response.products;
          }
       } catch (error) {
-        console.error('Lỗi lấy danh mục theo ID:', error);
       }
       return [];
     }

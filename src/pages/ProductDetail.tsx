@@ -8,6 +8,7 @@ import { ProductDetailData, ProductVariant, DiscountCode, getImageUrl } from '..
 import { ProductsService } from '@/services/products.service';
 import { DiscountCodeService } from '@/services/discountCode.service';
 import { CartService } from '@/services/cart.service';
+import { AuthService } from '@/services/auth.service';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -54,7 +55,6 @@ const ProductDetail = () => {
           // Không cần gọi POST /product-views nữa
         }
       } catch (error) {
-        console.error('Error fetching product:', error);
       } finally {
         setLoading(false);
       }
@@ -66,7 +66,6 @@ const ProductDetail = () => {
         const codes = await service.getActiveDiscountCodes();
         setDiscountCodes(codes);
       } catch (error) {
-        console.error("lỗi ", error);
       }
     };
 
@@ -84,6 +83,17 @@ const ProductDetail = () => {
 
   const handleBuyNow = async () => {
     if (!product) return;
+
+    // Check đăng nhập trước
+    if (!AuthService.isAuthenticated()) {
+      toast({
+        title: "Yêu cầu đăng nhập",
+        description: "Vui lòng đăng nhập để mua sản phẩm",
+        variant: "destructive",
+      });
+      navigate(`/auth?redirect=/product/${product.id}`);
+      return;
+    }
 
     setIsAddingToCart(true);
     try {

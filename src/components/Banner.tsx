@@ -27,7 +27,6 @@ const HeroBanner = () => {
         
         setBanners(sortedBanners);
       } catch (error) {
-        console.error('Error loading banners:', error);
       } finally {
         setLoading(false);
       }
