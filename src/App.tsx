@@ -16,6 +16,7 @@ import ToolBMI from "./pages/ToolBMI";
 import Checkout from "./pages/Checkout";
 import PaymentPage from "./pages/PaymentPage";
 import OrderDetail from "./pages/OrderDetail";
+import Profile from "./pages/Profile";
 import FloatingContactButton from "./components/contact/FloatingContactButton";
 import AuthExpiredHandler from "./components/AuthExpiredHandler";
 
@@ -44,6 +45,7 @@ const App = () => (
           <Route path="/payment/:orderNumber" element={<PaymentPage />} />
           <Route path="/order" element={<OrderDetail />} /> {/* Danh sách đơn hàng */}
           <Route path="/order/:orderNumber" element={<OrderDetail />} /> {/* Chi tiết đơn hàng */}
+          <Route path="/profile" element={<Profile />} />
           <Route path="/FlashSale" element={<FlashSalePage />} />
           <Route path="/ToolTTDE" element={<ToolTTDE />} />
           <Route path="/ToolBMI" element={<ToolBMI />} />

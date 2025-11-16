@@ -32,7 +32,7 @@ export class PaymentService {
         }
     }
 
-    // Lấy danh sách transactions gần đây (để debug/test)
+    // Lấy danh sách transactions gần đây
     async getRecentTransactions(): Promise<{ success: boolean; count: number; transactions: any[] }> {
         try {
             const response = await apiClient.get<any>('/payment/transactions');
@@ -46,7 +46,7 @@ export class PaymentService {
         }
     }
 
-    // Manual confirm payment (chỉ dùng cho testing)
+    // Xác nhận thanh toán thủ công
     async manualConfirmPayment(orderNumber: string, transactionId?: string): Promise<TransactionStatus> {
         try {
             const response = await apiClient.post<TransactionStatus>('/payment/manual-confirm', {

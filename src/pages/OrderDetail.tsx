@@ -41,8 +41,10 @@ const OrderDetail = () => {
     const loadOrdersList = async () => {
         try {
             const data = await orderService.getUserOrders();
-            setOrders(data);
+            // Đảm bảo data luôn là array
+            setOrders(Array.isArray(data) ? data : []);
         } catch (error) {
+            setOrders([]); // Set empty array nếu có lỗi
         } finally {
             setLoading(false);
         }
@@ -176,7 +178,7 @@ const OrderDetail = () => {
                     </Card>
                 ) : (
                     <div className="space-y-4">
-                        {orders.map((order) => (
+                        {Array.isArray(orders) && orders.map((order) => (
                             <Card key={order.id} className="hover:shadow-lg transition-shadow">
                                 <CardContent className="p-6">
                                     <div className="flex justify-between items-start mb-4">

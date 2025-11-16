@@ -1,6 +1,5 @@
 
   import { apiClient, FlashSaleResponse } from '@/lib/api-client';
-  import { error } from 'console';
 
   export class FlashSaleService {
     // Lấy Flash Sale đang active với filters
@@ -37,10 +36,8 @@
 
         const response = await apiClient.get<FlashSaleResponse>(endpoint);
         return response;
-      } catch 
-      {
-        
-        // Return empty FlashSaleResponse structure
+      } catch {
+        return {
         return {
           success: false,
           data: null,
@@ -51,7 +48,3 @@
   }
 
   export default FlashSaleService;
-
-
-
-

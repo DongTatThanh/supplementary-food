@@ -9,6 +9,7 @@ import { ProductsService } from '@/services/products.service';
 import { DiscountCodeService } from '@/services/discountCode.service';
 import { CartService } from '@/services/cart.service';
 import { AuthService } from '@/services/auth.service';
+import FlashSaleService from '@/services/fashSale.service';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -33,6 +34,7 @@ const ProductDetail = () => {
   const [discountCodes, setDiscountCodes] = useState<DiscountCode[]>([]);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [flashSalePrice, setFlashSalePrice] = useState<{original_price: string, sale_price: string, discount_percent: number} | null>(null);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -69,9 +71,34 @@ const ProductDetail = () => {
       }
     };
 
+    const checkFlashSale = async (productId: number) => {
+      try {
+        const flashSaleService = new FlashSaleService();
+        const result = await flashSaleService.getActiveFlashSale();
+        if (result.success && result.data?.products) {
+          const flashSaleProduct = result.data.products.find(p => p.id === productId);
+          if (flashSaleProduct?.flash_sale) {
+            setFlashSalePrice({
+              original_price: flashSaleProduct.flash_sale.original_price,
+              sale_price: flashSaleProduct.flash_sale.sale_price,
+              discount_percent: flashSaleProduct.flash_sale.discount_percent
+            });
+          } else {
+            setFlashSalePrice(null);
+          }
+        } else {
+          setFlashSalePrice(null);
+        }
+      } catch (error) {
+        setFlashSalePrice(null);
+      }
+    };
+
     if (id) {
+      const productId = parseInt(id || '0', 10);
       fetchProduct();
       fetchDiscountCodes();
+      checkFlashSale(productId);
     }
   }, [id]);
 
@@ -152,9 +179,11 @@ const ProductDetail = () => {
     );
   }
 
-  const price = selectedVariant ? Number(selectedVariant.price) : Number(product.price);
-  const comparePrice = selectedVariant?.compare_price ? Number(selectedVariant.compare_price) : (product.compare_price ? Number(product.compare_price) : null);
-  const discount = comparePrice && comparePrice > price ? Math.round((1 - price / comparePrice) * 100) : 0;
+  // Ưu tiên giá flash sale nếu có
+  const finalSalePrice = flashSalePrice ? flashSalePrice.sale_price : (selectedVariant ? selectedVariant.price : product.price);
+  const price = Number(finalSalePrice);
+  const comparePrice = flashSalePrice ? Number(flashSalePrice.original_price) : (selectedVariant?.compare_price ? Number(selectedVariant.compare_price) : (product.compare_price ? Number(product.compare_price) : null));
+  const discount = flashSalePrice ? flashSalePrice.discount_percent : (comparePrice && comparePrice > price ? Math.round((1 - price / comparePrice) * 100) : 0);
   const images = [product.featured_image, ...(product.image_gallery || [])].filter(Boolean);
 
   return (
