@@ -5,18 +5,28 @@ interface ProductVariantSelectorProps {
   variants?: ProductVariant[];
   selectedVariant: ProductVariant | null;
   onVariantSelect: (variant: ProductVariant) => void;
+  flashSalePrice?: {item_id: number, variant_id: number | null, original_price: string, sale_price: string, discount_percent: number} | null;
 }
 
 export const ProductVariantSelector = ({
   variants,
   selectedVariant,
   onVariantSelect,
+  flashSalePrice,
 }: ProductVariantSelectorProps) => {
   if (!variants || variants.length === 0) return null;
 
   // Group by size and flavor
   const sizes = [...new Set(variants.map(v => v.size).filter(Boolean))];
   const flavors = [...new Set(variants.map(v => v.flavor).filter(Boolean))];
+
+  // Tính giá hiển thị: chỉ áp dụng Flash Sale cho variant có ID khớp với variant_id
+  const getDisplayPrice = (variant: ProductVariant) => {
+    if (flashSalePrice && flashSalePrice.variant_id && Number(flashSalePrice.variant_id) === Number(variant.id)) {
+      return Number(flashSalePrice.sale_price);
+    }
+    return Number(variant.price);
+  };
 
   return (
     <div className="space-y-6">
@@ -58,7 +68,7 @@ export const ProductVariantSelector = ({
                       )}
                       <div className="font-bold text-gray-800 mb-1">{variant.size}</div>
                       <div className="text-lg font-bold text-red-600">
-                        {Number(variant.price).toLocaleString('vi-VN')}đ
+                        {getDisplayPrice(variant).toLocaleString('vi-VN')}đ
                       </div>
                     </>
                   )}

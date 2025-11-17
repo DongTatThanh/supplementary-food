@@ -315,6 +315,7 @@ export interface FlashSaleProduct {
   category?: Category;
   flash_sale: {
     item_id: number;
+    variant_id: number | null;
     original_price: string;
     sale_price: string;
     discount_percent: number;

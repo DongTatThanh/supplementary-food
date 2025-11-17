@@ -34,7 +34,12 @@ const ProductDetail = () => {
   const [discountCodes, setDiscountCodes] = useState<DiscountCode[]>([]);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
-  const [flashSalePrice, setFlashSalePrice] = useState<{original_price: string, sale_price: string, discount_percent: number} | null>(null);
+  const [flashSalePrice, setFlashSalePrice] = useState<{item_id: number, variant_id: number | null, original_price: string, sale_price: string, discount_percent: number} | null>(null);
+
+  // Scroll về đầu trang ngay khi vào trang hoặc khi id thay đổi
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [id]);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -53,15 +58,14 @@ const ProductDetail = () => {
             setSelectedVariant(defaultVariant);
           }
 
-          // Backend tự động track view khi gọi GET /products/:id
-          // Không cần gọi POST /product-views nữa
+
         }
       } catch (error) {
       } finally {
         setLoading(false);
       }
     };
-
+  // Lấy danh sách mã giảm giá
     const fetchDiscountCodes = async () => {
       try {
         const service = new DiscountCodeService();
@@ -70,6 +74,7 @@ const ProductDetail = () => {
       } catch (error) {
       }
     };
+    // Kiểm tra Flash Sale
 
     const checkFlashSale = async (productId: number) => {
       try {
@@ -79,6 +84,8 @@ const ProductDetail = () => {
           const flashSaleProduct = result.data.products.find(p => p.id === productId);
           if (flashSaleProduct?.flash_sale) {
             setFlashSalePrice({
+              item_id: Number(flashSaleProduct.flash_sale.item_id),
+              variant_id: flashSaleProduct.flash_sale.variant_id ? Number(flashSaleProduct.flash_sale.variant_id) : null,
               original_price: flashSaleProduct.flash_sale.original_price,
               sale_price: flashSaleProduct.flash_sale.sale_price,
               discount_percent: flashSaleProduct.flash_sale.discount_percent
@@ -101,6 +108,16 @@ const ProductDetail = () => {
       checkFlashSale(productId);
     }
   }, [id]);
+
+  // Tự động chọn variant đang Flash Sale khi product và flashSalePrice đã load
+  useEffect(() => {
+    if (product && flashSalePrice && flashSalePrice.variant_id && product.variants && product.variants.length > 0) {
+      const flashSaleVariant = product.variants.find((v: ProductVariant) => Number(v.id) === Number(flashSalePrice.variant_id));
+      if (flashSaleVariant && (!selectedVariant || Number(selectedVariant.id) !== Number(flashSalePrice.variant_id))) {
+        setSelectedVariant(flashSaleVariant);
+      }
+    }
+  }, [product, flashSalePrice]);
 
   const handleCopyCode = (code: string) => {
     navigator.clipboard.writeText(code);
@@ -179,11 +196,12 @@ const ProductDetail = () => {
     );
   }
 
-  // Ưu tiên giá flash sale nếu có
-  const finalSalePrice = flashSalePrice ? flashSalePrice.sale_price : (selectedVariant ? selectedVariant.price : product.price);
+  // Ưu tiên giá flash sale nếu variant được chọn đang trong flash sale
+  const isSelectedVariantInFlashSale = flashSalePrice && selectedVariant && flashSalePrice.variant_id && Number(flashSalePrice.variant_id) === Number(selectedVariant.id);
+  const finalSalePrice = isSelectedVariantInFlashSale ? flashSalePrice.sale_price : (selectedVariant ? selectedVariant.price : product.price);
   const price = Number(finalSalePrice);
-  const comparePrice = flashSalePrice ? Number(flashSalePrice.original_price) : (selectedVariant?.compare_price ? Number(selectedVariant.compare_price) : (product.compare_price ? Number(product.compare_price) : null));
-  const discount = flashSalePrice ? flashSalePrice.discount_percent : (comparePrice && comparePrice > price ? Math.round((1 - price / comparePrice) * 100) : 0);
+  const comparePrice = isSelectedVariantInFlashSale ? Number(flashSalePrice.original_price) : (selectedVariant?.compare_price ? Number(selectedVariant.compare_price) : (product.compare_price ? Number(product.compare_price) : null));
+  const discount = isSelectedVariantInFlashSale ? flashSalePrice.discount_percent : (comparePrice && comparePrice > price ? Math.round((1 - price / comparePrice) * 100) : 0);
   const images = [product.featured_image, ...(product.image_gallery || [])].filter(Boolean);
 
   return (
@@ -281,6 +299,7 @@ const ProductDetail = () => {
                 variants={product.variants}
                 selectedVariant={selectedVariant}
                 onVariantSelect={setSelectedVariant}
+                flashSalePrice={flashSalePrice}
               />
             )}
 
