@@ -34,6 +34,9 @@ export class CartService {
                 return {
                     id: 0,
                     user_id: 0,
+                    session_id: null,
+                    created_at: '',
+                    updated_at: '',
                     items: items || [],
                     total: total || 0,
                     itemCount: itemCount || 0

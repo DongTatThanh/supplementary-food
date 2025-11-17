@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Search, ShoppingCart, User, Menu, ChevronDown, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,15 +30,17 @@ import { Navigate } from "react-router-dom";
 const Header = () => {
   const [user, setUser] = useState(AuthService.getCurrentUser());
   const [isAuthenticated, setIsAuthenticated] = useState(AuthService.isAuthenticated());
+  const [searchKeyword, setSearchKeyword] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
   
 
   useEffect(() => {
     // Refresh auth state khi component mount
     const refreshAuthState = () => {
-      setUser(AuthService.getCurrentUser());
-      setIsAuthenticated(AuthService.isAuthenticated());
+    setUser(AuthService.getCurrentUser());
+    setIsAuthenticated(AuthService.isAuthenticated());
     };
     
     refreshAuthState();
@@ -63,6 +65,12 @@ const Header = () => {
       window.removeEventListener('auth:logout', handleAuthChange);
     };
   }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const currentKeyword = params.get('q') || '';
+    setSearchKeyword(currentKeyword);
+  }, [location.search]);
 
   const handleLogout = () => {
     AuthService.logout();
@@ -97,6 +105,26 @@ const Header = () => {
     navigate('/ToolBMI');
   };
 
+  const handleSearch = () => {
+    if (!searchKeyword.trim()) {
+      toast({
+        title: "Vui lòng nhập từ khóa",
+        description: "Bạn chưa nhập nội dung tìm kiếm.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    navigate(`/search?q=${encodeURIComponent(searchKeyword.trim())}`);
+  };
+
+  const handleSearchKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      handleSearch();
+    }
+  };
+
   return (
     <header className="bg-primary text-primary-foreground">
       {/* Top banner */}
@@ -120,8 +148,17 @@ const Header = () => {
                 type="text"
                 placeholder="Bạn cần gì ngày hôm nay..."
                 className="w-full pl-4 pr-12 py-2 border-0 bg-white text-foreground"
+                value={searchKeyword}
+                onChange={(event) => setSearchKeyword(event.target.value)}
+                onKeyDown={handleSearchKeyDown}
+                aria-label="Tìm kiếm sản phẩm"
               />
-              <Button size="sm" className="absolute right-1 top-1 bg-primary hover:bg-primary/90">
+              <Button
+                type="button"
+                size="sm"
+                onClick={handleSearch}
+                className="absolute right-1 top-1 bg-primary hover:bg-primary/90"
+              >
                 <Search className="h-4 w-4" />
               </Button>
             </div>

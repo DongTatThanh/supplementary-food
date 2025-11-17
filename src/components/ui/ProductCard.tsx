@@ -32,9 +32,11 @@ const ProductCard = ({ product, soldQuantity, categoryId }: ProductCardProps) =>
   const discount = product.discount_percentage || 
     (priceToCompare > displayPrice ? Math.round((1 - displayPrice / priceToCompare) * 100) : 0);
   
-  // Get inventory quantity - API returns inventory_quantity
-  const quantity = product.inventory_quantity || product.stock_quantity ;
-  const hasStock = quantity > 0;
+  // Determine inventory quantity (fallback to in-stock if undefined)
+  const inventoryQuantity = typeof product.inventory_quantity === 'number' ? product.inventory_quantity : undefined;
+  const stockQuantity = typeof product.stock_quantity === 'number' ? product.stock_quantity : undefined;
+  const quantity = inventoryQuantity ?? stockQuantity;
+  const hasStock = quantity === undefined ? true : quantity > 0;
   
   // Navigate to product detail page
   const handleProductClick = () => {

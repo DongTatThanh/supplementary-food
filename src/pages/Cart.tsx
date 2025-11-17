@@ -1,26 +1,32 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Cart, CartItem } from '@/lib/api-client';
 import { CartService } from '@/services/cart.service';
+import FlashSaleService from '@/services/fashSale.service';
 
-
-import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardHeader, CardContent, CardFooter, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { getImageUrl } from '@/lib/api-client';
 import { Trash2, Plus, Minus } from 'lucide-react';
 
 const cartService = new CartService();
+const flashSaleService = new FlashSaleService();
+
+interface FlashSalePriceMap {
+    [key: string]: {
+        sale_price: string;
+        original_price: string;
+        discount_percent: number;
+    };
+}
 
 const CartPage: React.FC = () => {
     const navigate = useNavigate();
     const [cart, setCart] = useState<Cart | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        fetchCart();
-    }, []);
+    const [flashSalePrices, setFlashSalePrices] = useState<FlashSalePriceMap>({});
 
     const fetchCart = async () => {
         try {
@@ -33,6 +39,89 @@ const CartPage: React.FC = () => {
         } finally {
             setLoading(false);
         }
+    };
+
+    const checkFlashSalePrices = useCallback(async (cartItems: CartItem[]) => {
+        if (!cartItems || cartItems.length === 0) return;
+
+        try {
+            const result = await flashSaleService.getActiveFlashSale();
+            if (result.success && result.data?.products) {
+                const priceMap: FlashSalePriceMap = {};
+                
+                cartItems.forEach((item) => {
+                    const flashSaleProduct = result.data.products.find(
+                        (p: any) => p.id === item.product.id
+                    );
+                    
+                    if (flashSaleProduct?.flash_sale) {
+                        const flashSaleVariantId = flashSaleProduct.flash_sale.variant_id 
+                            ? Number(flashSaleProduct.flash_sale.variant_id) 
+                            : null;
+                        
+                        // Nếu flash sale không có variant_id cụ thể, áp dụng cho tất cả variant
+                        // Nếu có variant_id, chỉ áp dụng khi giá trong cart khớp với giá flash sale
+                        const itemPrice = parseFloat(item.price);
+                        const flashSalePrice = Number(flashSaleProduct.flash_sale.sale_price);
+                        
+                        // Kiểm tra xem giá trong cart có khớp với giá flash sale không
+                        // Hoặc nếu flash sale không có variant_id cụ thể
+                        if (flashSaleVariantId === null || Math.abs(itemPrice - flashSalePrice) < 0.01) {
+                            const key = `${item.product.id}_${flashSaleVariantId || 'default'}`;
+                            priceMap[key] = {
+                                sale_price: flashSaleProduct.flash_sale.sale_price,
+                                original_price: flashSaleProduct.flash_sale.original_price,
+                                discount_percent: flashSaleProduct.flash_sale.discount_percent,
+                            };
+                        }
+                    }
+                });
+                
+                setFlashSalePrices(priceMap);
+            }
+        } catch (err) {
+            // Lỗi khi check flash sale, không ảnh hưởng đến hiển thị giỏ hàng
+        }
+    }, []);
+
+    useEffect(() => {
+        fetchCart();
+    }, []);
+
+    useEffect(() => {
+        if (cart && cart.items.length > 0) {
+            checkFlashSalePrices(cart.items);
+        }
+    }, [cart, checkFlashSalePrices]);
+
+    const getItemPrice = (item: CartItem): { price: number; originalPrice?: number } => {
+        // Tìm flash sale price cho sản phẩm này
+        // Thử tìm với key có variant_id và không có variant_id
+        const keys = [
+            `${item.product.id}_default`,
+            ...Object.keys(flashSalePrices).filter(k => k.startsWith(`${item.product.id}_`))
+        ];
+        
+        for (const key of keys) {
+            const flashSale = flashSalePrices[key];
+            if (flashSale) {
+                // Kiểm tra xem giá trong cart có gần với giá flash sale không
+                const itemPrice = parseFloat(item.price);
+                const flashSalePrice = Number(flashSale.sale_price);
+                
+                // Nếu giá khớp hoặc gần khớp (sai số < 0.01), sử dụng flash sale price
+                if (Math.abs(itemPrice - flashSalePrice) < 0.01 || itemPrice === flashSalePrice) {
+                    return {
+                        price: Number(flashSale.sale_price),
+                        originalPrice: Number(flashSale.original_price),
+                    };
+                }
+            }
+        }
+        
+        return {
+            price: parseFloat(item.price),
+        };
     };
 
     const handleUpdateQuantity = async (itemId: number, newQuantity: number) => {
@@ -54,7 +143,8 @@ const CartPage: React.FC = () => {
     const calculateTotal = () => {
         if (!cart) return 0;
         return cart.items.reduce((total, item) => {
-            return total + (parseFloat(item.price) * item.quantity);
+            const { price } = getItemPrice(item);
+            return total + (price * item.quantity);
         }, 0);
     };
 
@@ -114,9 +204,28 @@ const CartPage: React.FC = () => {
                                         <p className="text-sm text-gray-600 mb-2">
                                             {item.product.brand?.name}
                                         </p>
-                                        <p className="text-red-600 font-bold">
-                                            {parseFloat(item.price).toLocaleString('vi-VN')}₫
-                                        </p>
+                                        <div className="flex items-center gap-2">
+                                            {(() => {
+                                                const { price, originalPrice } = getItemPrice(item);
+                                                return (
+                                                    <>
+                                                        <p className="text-red-600 font-bold">
+                                                            {price.toLocaleString('vi-VN')}₫
+                                                        </p>
+                                                        {originalPrice && originalPrice > price && (
+                                                            <>
+                                                                <p className="text-gray-500 line-through text-sm">
+                                                                    {originalPrice.toLocaleString('vi-VN')}₫
+                                                                </p>
+                                                                <span className="bg-red-100 text-red-600 px-2 py-0.5 rounded text-xs font-bold">
+                                                                    FLASH SALE
+                                                                </span>
+                                                            </>
+                                                        )}
+                                                    </>
+                                                );
+                                            })()}
+                                        </div>
                                     </div>
                                     
                                     {/* Quantity Controls */}
@@ -150,7 +259,10 @@ const CartPage: React.FC = () => {
                                         </div>
                                         
                                         <p className="font-bold text-lg">
-                                            {(parseFloat(item.price) * item.quantity).toLocaleString('vi-VN')}₫
+                                            {(() => {
+                                                const { price } = getItemPrice(item);
+                                                return (price * item.quantity).toLocaleString('vi-VN');
+                                            })()}₫
                                         </p>
                                     </div>
                                 </div>

@@ -2,11 +2,14 @@ import { useState, useEffect } from "react";
 import { Brand, getImageUrl } from "@/lib/api-client";
 import { BrandService } from "@/services/brand.service";
 
+import { useNavigate } from "react-router-dom";
 const brandService = new BrandService();
 
 const BrandShowcase = () => {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [loading, setLoading] = useState(true);
+  const [id, setId] = useState<number | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBrands = async () => {
@@ -24,7 +27,10 @@ const BrandShowcase = () => {
     fetchBrands();  
   }, []);
 
-  
+  const handleBrandClick = (brandId: number) => {
+    setId(brandId);
+    navigate(`/brand/${brandId}`);
+  };
 
   return (
     <section className="py-14 bg-muted/50">
@@ -33,6 +39,7 @@ const BrandShowcase = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
           {brands.map((brand) => (
             <div
+            onClick={() => handleBrandClick(brand.id)}
               key={brand.id}
               className="bg-white rounded-2xl aspect-square flex items-center justify-center hover:shadow-2xl transition-transform hover:scale-105 overflow-hidden p-4"
             >

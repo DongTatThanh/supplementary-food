@@ -17,8 +17,11 @@ import Checkout from "./pages/Checkout";
 import PaymentPage from "./pages/PaymentPage";
 import OrderDetail from "./pages/OrderDetail";
 import Profile from "./pages/Profile";
+import BrandProducts from "./pages/BrandProducts";
+import SearchResults from "./pages/SearchResults";
 import FloatingContactButton from "./components/contact/FloatingContactButton";
 import AuthExpiredHandler from "./components/AuthExpiredHandler";
+import RecentOrderNotifier from "./components/websocket/RecentOrderNotifier";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +33,8 @@ const App = () => (
       <BrowserRouter>
         {/* Handler xử lý token hết hạn */}
         <AuthExpiredHandler />
+        {/* WebSocket notification cho đơn hàng mới */}
+        <RecentOrderNotifier />
         {/* Floating Contact Button - hiển thị trên tất cả trang */}
         <FloatingContactButton />
         
@@ -39,6 +44,8 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/category/:id" element={<ProductByCategory />} />
+          <Route path="/brand/:id" element={<BrandProducts />} />
+          <Route path="/search" element={<SearchResults />} />
           <Route path="/cart/:user_id" element={<Cart />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
