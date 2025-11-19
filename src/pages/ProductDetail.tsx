@@ -202,7 +202,13 @@ const ProductDetail = () => {
   const price = Number(finalSalePrice);
   const comparePrice = isSelectedVariantInFlashSale ? Number(flashSalePrice.original_price) : (selectedVariant?.compare_price ? Number(selectedVariant.compare_price) : (product.compare_price ? Number(product.compare_price) : null));
   const discount = isSelectedVariantInFlashSale ? flashSalePrice.discount_percent : (comparePrice && comparePrice > price ? Math.round((1 - price / comparePrice) * 100) : 0);
-  const images = [product.featured_image, ...(product.image_gallery || [])].filter(Boolean);
+  
+  // ✅ Ưu tiên lấy từ relation images[], fallback về image_gallery JSON
+  const images = product.images && product.images.length > 0
+    ? [product.featured_image, ...product.images
+        .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0))
+        .map(img => img.imageUrl)].filter(Boolean)
+    : [product.featured_image, ...(product.image_gallery || [])].filter(Boolean);
 
   return (
     <div className="min-h-screen bg-gray-50">

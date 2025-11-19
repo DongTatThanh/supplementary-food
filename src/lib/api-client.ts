@@ -386,6 +386,15 @@ export interface ProductListResponse
   message?: string;
 } 
 
+export interface ProductImage {
+  id: number;
+  productId: number;  // Backend trả về camelCase
+  imageUrl: string;   // Backend trả về camelCase
+  sortOrder: number;  // Backend trả về camelCase
+  image_type?: string;
+  is_active?: boolean;
+}
+
 export interface ProductDetailData 
 {
   id: number;
@@ -398,6 +407,7 @@ export interface ProductDetailData
   compare_price?: string;
   featured_image: string;
   image_gallery?: string[];
+  images?: ProductImage[]; // Relation từ backend
   inventory_quantity: number;
   is_on_sale: number;
   is_bestseller?: number;
