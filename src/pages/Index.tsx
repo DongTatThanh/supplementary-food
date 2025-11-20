@@ -1,7 +1,7 @@
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import BrandShowcase from "@/components/BrandShowcase";
-import CategorySection from "@/components/CategorySection";
+
 import KnowledgeSection from "@/components/KnowledgeSection";
 
 import Footer from "@/components/Footer";
@@ -11,6 +11,7 @@ import OnSaleProducts from "@/components/OnSaleProducts";
 import AllCategoriesWithProducts from "@/components/AllCategoriesWithProducts";
 import FlashSale from "@/components/FlashSale ";
 import Banner from "@/components/Banner";
+import Blog from "@/components/blog";
 
 const Index = () => {
   return (
@@ -32,12 +33,13 @@ const Index = () => {
         categoryName="Whey Protein"
         backgroundColor="bg-blue-900"
       /> */}
-           <BrandShowcase />
-      <CategorySection />
+
    
      
       {/* <KnowledgeSection />
   */}
+
+  <Blog/>
     </div>
   );
 };

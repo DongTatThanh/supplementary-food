@@ -22,6 +22,9 @@ import SearchResults from "./pages/SearchResults";
 import FloatingContactButton from "./components/contact/FloatingContactButton";
 import AuthExpiredHandler from "./components/AuthExpiredHandler";
 import RecentOrderNotifier from "./components/websocket/RecentOrderNotifier";
+import BlogPages from "./pages/BlogPages";
+import BlogDetail from "./pages/BlogDetail";
+
 
 const queryClient = new QueryClient();
 
@@ -56,6 +59,9 @@ const App = () => (
           <Route path="/FlashSale" element={<FlashSalePage />} />
           <Route path="/ToolTTDE" element={<ToolTTDE />} />
           <Route path="/ToolBMI" element={<ToolBMI />} />
+        <Route path="/blog" element={<BlogPages />} />
+<Route path="/blog/category/:slug" element={<BlogPages />} />
+<Route path="/blog/:slug" element={<BlogDetail />} />
 
         
           <Route path="*" element={<NotFound />} />

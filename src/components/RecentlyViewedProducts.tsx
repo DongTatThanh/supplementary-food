@@ -1,24 +1,33 @@
 import { useState, useEffect } from 'react';
 import productViewService, { ProductView } from '@/services/productView.service';
 import ProductCard from '@/components/ui/ProductCard';
-import { Eye, Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { useParams } from 'react-router-dom';
 
 const RecentlyViewedProducts = () => {
     const { toast } = useToast();
+    const { id } = useParams<{ id: string }>();
     const [viewHistory, setViewHistory] = useState<ProductView[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        loadViewHistory();
-    }, []);
+        // Load history khi component mount hoặc khi product id thay đổi
+        const timer = setTimeout(() => {
+            loadViewHistory();
+        }, 500); // Giảm delay xuống 500ms
+        
+        return () => clearTimeout(timer);
+    }, [id]);
 
     const loadViewHistory = async () => {
         try {
-            const history = await productViewService.getUserViewHistory(6); // Lấy 6 sản phẩm
+            setLoading(true);
+            const history = await productViewService.getUserViewHistory(6);
             setViewHistory(history);
         } catch (error) {
+            // Silent fail
         } finally {
             setLoading(false);
         }
@@ -58,10 +67,7 @@ const RecentlyViewedProducts = () => {
     return (
         <div className="py-8 border-t mt-8">
             <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-2">
-                    <Eye className="w-6 h-6 text-red-600" />
-                    <h2 className="text-2xl font-bold text-gray-800">Sản phẩm đã xem</h2>
-                </div>
+                <h2 className="text-2xl font-bold text-gray-800">Sản phẩm đã xem</h2>
                 
             </div>
 

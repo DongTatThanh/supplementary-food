@@ -10,6 +10,7 @@ import { DiscountCodeService } from '@/services/discountCode.service';
 import { CartService } from '@/services/cart.service';
 import { AuthService } from '@/services/auth.service';
 import FlashSaleService from '@/services/fashSale.service';
+import productViewService from '@/services/productView.service';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -57,8 +58,9 @@ const ProductDetail = () => {
             const defaultVariant = response.variants.find((v: ProductVariant) => v.is_default === 1) || response.variants[0];
             setSelectedVariant(defaultVariant);
           }
-
-
+          
+          // Track product view
+          await productViewService.trackProductView(productId);
         }
       } catch (error) {
       } finally {

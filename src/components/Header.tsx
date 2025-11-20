@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Search, ShoppingCart, User, Menu, ChevronDown, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-
+import { BlogCategory } from '@/lib/api-client';
 
 import {
   DropdownMenu,
@@ -25,6 +25,7 @@ import { AuthService } from "@/services/auth.service";
 import { useToast } from "@/hooks/use-toast";
 import CategoryDrawer from "./CategoryDrawer";
 import { Navigate } from "react-router-dom";
+import { PostService } from "@/services/post.service";
 
 
 const Header = () => {
@@ -34,6 +35,8 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
+  const [blogCategories, setBlogCategories] = useState<BlogCategory[]>([]);
+  const postService = new PostService();
   
 
   useEffect(() => {
@@ -54,6 +57,17 @@ const Header = () => {
     const handleAuthChange = () => {
       refreshAuthState();
     };
+
+    const loadBlogCategories = async () => {
+  try {
+    const response = await postService.getAllBlogCategories(); // Đổi tên method
+    setBlogCategories(response);
+  } catch (error) {
+    console.error("lỗi ", error);
+  }
+};
+loadBlogCategories();
+
     
     window.addEventListener('storage', handleStorageChange);
     window.addEventListener('auth:login', handleAuthChange);
@@ -260,29 +274,25 @@ const Header = () => {
          Kiến Thức
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
+
                     <div className="grid w-[400px] grid-cols-1 gap-3 p-4">
-                      <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
-                        <div  className="text-sm font-medium leading-none">Kiến Thức Dinh Dưỡng</div>
+                        {blogCategories.map((category) => (
+      <NavigationMenuLink 
+        key={category.id}
+        onClick={() => navigate(`/blog/category/${category.slug}`)}
+        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground cursor-pointer"
+      >
+        <div className="text-sm font-medium leading-none">{category.name}</div>
+        {category.description && (
+          <p className="text-xs text-muted-foreground">{category.description}</p>
+        )}
+                        </NavigationMenuLink>
+                      ))}
+                    </div>
 
-                      </NavigationMenuLink>
-                      <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
-                        <div className="text-sm font-medium leading-none">Kiến Thức Tập Luyện</div>
-
-                      
-                       
-                      </NavigationMenuLink>
-                      <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
-                        <div className="text-sm font-medium leading-none"> Kiến Thức Tập Luyện</div>
-
-                      </NavigationMenuLink>
-                      <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
-                        <div className="text-sm font-medium leading-none">Tư Vấn Dinh Dưỡng </div>
-
-                    
+                   
                         
                        
-                      </NavigationMenuLink>
-                      </div>
                     
                   </NavigationMenuContent>
                 </NavigationMenuItem>

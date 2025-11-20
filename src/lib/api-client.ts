@@ -574,6 +574,32 @@ export interface TransactionStatus {
   message: string;
   order?: any;
 }
+export interface BlogCategory {
+  id: number;
+  name: string;
+  slug: string;
+  description?: string;
+  created_at: string;
+  updated_at: string;
+  posts?: BlogPost[];
+}
+export interface BlogPost {
+  id: number;
+  category_id?: number;
+  title: string;
+  slug: string;
+  thumbnail?: string;
+  thumbnail_url?: string;
+  content: string;
+  author?: string;
+  views: number;
+  is_featured: boolean;
+  excerpt?: string;
+  tags?: string[];
+  created_at: string;
+  updated_at: string;
+  category?: BlogCategory;
+}
 
 export { ApiClient };
 
