@@ -1,15 +1,18 @@
-                                                                                                                                                                                                                                                                                            import { useEffect, useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useEffect, useState, useCallback } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Search } from 'lucide-react';
 
 import ProductCard from '@/components/ui/ProductCard';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import SearchService, { SearchResultPayload } from '@/services/search.service';
+import ProductsService from '@/services/products.service';
 import { useToast } from '@/hooks/use-toast';
-import { getImageUrl } from '@/lib/api-client';
+import { Product } from '@/lib/api-client';
+import PriceFilterproducts from '@/components/PriceFilterproducts';
+import BrandFilter from '@/components/BrandFilter';
+import { ProductSort } from '@/components/ProductSort';
 
-const searchService = new SearchService();
+const productsService = new ProductsService();
 
 const SearchResults = () => {
   const [searchParams] = useSearchParams();
@@ -19,39 +22,78 @@ const SearchResults = () => {
   const queryParam = searchParams.get('q') || '';
 
   const [searchTerm, setSearchTerm] = useState(queryParam);
-  const [results, setResults] = useState<SearchResultPayload | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  // Filter states
+  const [brandId, setBrandId] = useState<number | null>(null);
+  const [minPrice, setMinPrice] = useState<number | null>(null);
+  const [maxPrice, setMaxPrice] = useState<number | null>(null);
+  const [sort, setSort] = useState<string>('');
+  
+  // Pagination states
+  const [page, setPage] = useState(1);
+  const [limit] = useState(12);
+  const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
     setSearchTerm(queryParam);
-
-    if (queryParam.trim()) {
-      fetchResults(queryParam);
-    } else {
-      setResults(null);
-      setError(null);
-    }
+    setPage(1); // Reset về trang 1 khi search term thay đổi
   }, [queryParam]);
 
-  const fetchResults = async (keyword: string) => {
+  const fetchResults = useCallback(async () => {
+    if (!queryParam.trim()) {
+      setProducts([]);
+      setError(null);
+      setTotal(0);
+      setTotalPages(0);
+      return;
+    }
+
     try {
       setLoading(true);
       setError(null);
-      const data = await searchService.search({
-        query: keyword.trim(),
-        limit: 24,
+      
+      // Map sort values từ ProductSort component sang backend format
+      const sortMap: Record<string, string> = {
+        priceAsc: 'price_asc',
+        priceDesc: 'price_desc',
+        nameAsc: 'name_asc',
+        nameDesc: 'name_desc',
+      };
+      
+      const sortValue = sort ? sortMap[sort] || '' : '';
+      
+      const result = await productsService.searchProducts({
+        search: queryParam.trim(),
+        brandId: brandId ?? undefined,
+        priceMin: minPrice ?? undefined,
+        priceMax: maxPrice ?? undefined,
+        sort: sortValue || undefined,
+        page,
+        limit,
       });
-      setResults(data);
+      
+      setProducts(result.data);
+      setTotal(result.total);
+      setTotalPages(result.totalPages);
     } catch (err) {
       const message =
         err instanceof Error ? err.message : 'Không thể tìm kiếm. Vui lòng thử lại.';
       setError(message);
-      setResults(null);
+      setProducts([]);
+      setTotal(0);
+      setTotalPages(0);
     } finally {
       setLoading(false);
     }
-  };
+  }, [queryParam, brandId, minPrice, maxPrice, sort, page, limit]);
+
+  useEffect(() => {
+    fetchResults();
+  }, [fetchResults]);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -67,15 +109,26 @@ const SearchResults = () => {
     navigate(`/search?q=${encodeURIComponent(searchTerm.trim())}`);
   };
 
-  const hasResults =
-    (results?.products && results.products.length > 0) ||
-    (results?.categories && results.categories.length > 0) ||
-    (results?.brands && results.brands.length > 0) ||
-    (results?.stores && results.stores.length > 0);
+  const handlePriceChange = (min: number | null, max: number | null) => {
+    setMinPrice(min);
+    setMaxPrice(max);
+    setPage(1); // Reset về trang 1 khi filter thay đổi
+  };
+
+  const handleBrandChange = (brand: number | null) => {
+    setBrandId(brand);
+    setPage(1); // Reset về trang 1 khi filter thay đổi
+  };
+
+  const handleSortChange = (sortParam: string) => {
+    setSort(sortParam);
+    setPage(1); // Reset về trang 1 khi sort thay đổi
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="container mx-auto px-4 space-y-8">
+        {/* Search Form */}
         <form
           onSubmit={handleSubmit}
           className="bg-white p-4 rounded-lg shadow-sm flex items-center gap-3"
@@ -95,135 +148,107 @@ const SearchResults = () => {
         {queryParam && (
           <div className="flex flex-col gap-1">
             <h1 className="text-2xl font-bold text-gray-800">
-              Kết quả cho “{queryParam}”
+              Kết quả cho "{queryParam}"
             </h1>
             <p className="text-sm text-gray-500">
               {loading
                 ? 'Đang tìm kiếm...'
-                : hasResults
-                ? 'Chúng tôi đã tìm thấy một số kết quả phù hợp'
+                : total > 0
+                ? `Tìm thấy ${total} sản phẩm`
                 : 'Không tìm thấy kết quả nào'}
             </p>
           </div>
         )}
 
-        {loading ? (
-          <div className="flex justify-center py-16">
-            <div className="animate-spin rounded-full h-16 w-16 border-4 border-red-600 border-t-transparent"></div>
-          </div>
-        ) : error ? (
-          <div className="bg-white rounded-lg p-6 text-center text-red-600">
-            {error}
-          </div>
-        ) : queryParam && !hasResults ? (
-          <div className="bg-white rounded-lg p-6 text-center text-gray-600">
-            Không tìm thấy kết quả nào cho “{queryParam}”. Bạn hãy thử từ khóa khác nhé.
-          </div>
-        ) : (
-          <>
-            {results?.products && results.products.length > 0 && (
-              <section className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-semibold text-gray-800">
-                    Sản phẩm
-                  </h2>
-                  <span className="text-sm text-gray-500">
-                  {results.products.length} sản phẩm
-                  </span>
+        {queryParam && (
+          <div className="flex gap-6">
+            {/* Sidebar Filters */}
+            <div className="w-64 flex-shrink-0">
+              <div className="bg-white rounded-lg p-4 sticky top-4 space-y-6">
+                {/* Price Filter */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-4">Lọc theo giá</h3>
+                  <PriceFilterproducts onChange={handlePriceChange} />
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {results.products.map((product) => (
-                    <ProductCard key={product.id} product={product} />
-                  ))}
-                </div>
-              </section>
-            )}
 
-            {results?.categories && results.categories.length > 0 && (
-              <section className="space-y-3">
-                <h2 className="text-xl font-semibold text-gray-800">Danh mục</h2>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {results.categories.map((category) => (
-                    <Link
-                      key={category.id}
-                      to={`/category/${category.id}`}
-                      className="bg-white rounded-lg p-4 border border-gray-100 shadow-sm hover:shadow-md transition-shadow"
-                    >
-                      <h3 className="font-semibold text-gray-800">
-                        {category.name}
-                      </h3>
-                      {category.description && (
-                        <p className="text-sm text-gray-500 mt-1 line-clamp-2">
-                          {category.description}
-                        </p>
-                      )}
-                    </Link>
-                  ))}
+                {/* Brand Filter */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-4">Hãng sản xuất</h3>
+                  <BrandFilter onChange={handleBrandChange} />
                 </div>
-              </section>
-            )}
+              </div>
+            </div>
 
-            {results?.brands && results.brands.length > 0 && (
-              <section className="space-y-3">
-                <h2 className="text-xl font-semibold text-gray-800">Thương hiệu</h2>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {results.brands.map((brand) => (
-                    <Link
-                      key={brand.id}
-                      to={`/brand/${brand.id}`}
-                      className="bg-white rounded-lg p-4 border border-gray-100 shadow-sm hover:shadow-md transition-shadow flex items-center gap-4"
-                    >
-                      {brand.logo_url && (
-                        <img
-                          src={getImageUrl(brand.logo_url)}
-                          alt={brand.name}
-                          className="h-12 w-12 object-contain"
-                        />
-                      )}
-                      <div>
-                        <h3 className="font-semibold text-gray-800">
-                          {brand.name}
-                        </h3>
-                        {brand.description && (
-                          <p className="text-sm text-gray-500 line-clamp-2">
-                            {brand.description}
-                          </p>
-                        )}
-                      </div>
-                    </Link>
-                  ))}
+            {/* Main Content */}
+            <div className="flex-1">
+              {/* Sort Bar */}
+              <div className="bg-white rounded-lg p-4 mb-6 shadow-sm">
+                <div className="flex items-center justify-between flex-wrap gap-4">
+                  <div className="flex items-center gap-4 flex-wrap">
+                    <span className="text-sm font-semibold text-gray-700">Sắp xếp:</span>
+                    <ProductSort onChange={handleSortChange} />
+                  </div>
+                  {total > 0 && (
+                    <span className="text-sm text-gray-600">
+                      Trang {page} / {totalPages} ({total} sản phẩm)
+                    </span>
+                  )}
                 </div>
-              </section>
-            )}
+              </div>
 
-            {results?.stores && results.stores.length > 0 && (
-              <section className="space-y-3">
-                <h2 className="text-xl font-semibold text-gray-800">Cửa hàng</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {results.stores.map((store, index) => (
-                    <div
-                      key={store.id || index}
-                      className="bg-white rounded-lg p-4 border border-gray-100 shadow-sm"
-                    >
-                      <h3 className="font-semibold text-gray-800">
-                        {store.name}
-                      </h3>
-                      {store.address && (
-                        <p className="text-sm text-gray-500 mt-1">
-                          Địa chỉ: {store.address}
-                        </p>
-                      )}
-                      {store.phone && (
-                        <p className="text-sm text-gray-500">
-                          Điện thoại: {store.phone}
-                        </p>
-                      )}
+              {/* Products Grid */}
+              {loading ? (
+                <div className="flex justify-center py-16">
+                  <div className="animate-spin rounded-full h-16 w-16 border-4 border-red-600 border-t-transparent"></div>
+                </div>
+              ) : error ? (
+                <div className="bg-white rounded-lg p-6 text-center text-red-600">
+                  {error}
+                </div>
+              ) : products.length === 0 ? (
+                <div className="bg-white rounded-lg p-6 text-center text-gray-600">
+                  Không tìm thấy kết quả nào cho "{queryParam}". Bạn hãy thử từ khóa khác hoặc điều chỉnh bộ lọc nhé.
+                </div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    {products.map((product) => (
+                      <ProductCard key={product.id} product={product} />
+                    ))}
+                  </div>
+
+                  {/* Pagination */}
+                  {totalPages > 1 && (
+                    <div className="flex justify-center items-center gap-2 mt-8">
+                      <button
+                        onClick={() => setPage(prev => Math.max(1, prev - 1))}
+                        disabled={page === 1}
+                        className="px-4 py-2 bg-white border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                      >
+                        Trước
+                      </button>
+                      <span className="px-4 py-2 text-gray-700">
+                        Trang {page} / {totalPages}
+                      </span>
+                      <button
+                        onClick={() => setPage(prev => Math.min(totalPages, prev + 1))}
+                        disabled={page === totalPages}
+                        className="px-4 py-2 bg-white border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                      >
+                        Sau
+                      </button>
                     </div>
-                  ))}
-                </div>
-              </section>
-            )}
-          </>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+        )}
+
+        {!queryParam && (
+          <div className="bg-white rounded-lg p-8 text-center text-gray-600">
+            <p>Vui lòng nhập từ khóa tìm kiếm để bắt đầu.</p>
+          </div>
         )}
       </div>
     </div>

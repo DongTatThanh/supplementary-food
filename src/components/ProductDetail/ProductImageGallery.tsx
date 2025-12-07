@@ -32,8 +32,8 @@ export const ProductImageGallery = ({
   };
   
   const goToNext = () => {
-    const newIndex = currentIndex < images.length - 1 ? currentIndex + 1 : 0;
-    onImageSelect(images[newIndex]);
+      const newIndex = currentIndex < images.length - 1 ? currentIndex + 1 : 0;
+      onImageSelect(images[newIndex]);
   };
   
   // Keyboard navigation

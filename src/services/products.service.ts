@@ -114,5 +114,92 @@ export class ProductsService {
       }
       return [];
     }
+
+    // Tìm kiếm sản phẩm với các bộ lọc
+    async searchProducts(filter: {
+      search?: string;
+      brandId?: number;
+      categoryId?: number;
+      priceMin?: number;
+      priceMax?: number;
+      sort?: string;
+      page: number;
+      limit: number;
+    }): Promise<{
+      data: Product[];
+      total: number;
+      currentPage: number;
+      totalPages: number;
+    }> {
+      try {
+        // Xây dựng query parameters
+        const params = new URLSearchParams();
+        
+        if (filter.search) {
+          params.append('search', filter.search);
+        }
+        if (filter.brandId !== undefined) {
+          params.append('brandId', filter.brandId.toString());
+        }
+        if (filter.categoryId !== undefined) {
+          params.append('categoryId', filter.categoryId.toString());
+        }
+        if (filter.priceMin !== undefined) {
+          params.append('minPrice', filter.priceMin.toString());
+        }
+        if (filter.priceMax !== undefined) {
+          params.append('maxPrice', filter.priceMax.toString());
+        }
+        if (filter.sort) {
+          params.append('sort', filter.sort);
+        }
+        params.append('page', filter.page.toString());
+        params.append('limit', filter.limit.toString());
+
+        const queryString = params.toString();
+        const response = await apiClient.get<{
+          data: Product[];
+          total: number;
+          currentPage: number;
+          totalPages: number;
+        }>(`/products?${queryString}`);
+
+        // Xử lý response - có thể là object trực tiếp hoặc wrapped trong data
+        if (response.data && Array.isArray(response.data)) {
+          return {
+            data: response.data,
+            total: response.total || response.data.length,
+            currentPage: response.currentPage || filter.page,
+            totalPages: response.totalPages || Math.ceil((response.total || response.data.length) / filter.limit),
+          };
+        }
+
+        // Nếu response là array (trường hợp không có filter)
+        if (Array.isArray(response)) {
+          return {
+            data: response,
+            total: response.length,
+            currentPage: filter.page,
+            totalPages: Math.ceil(response.length / filter.limit),
+          };
+        }
+
+        // Fallback
+        return {
+          data: [],
+          total: 0,
+          currentPage: filter.page,
+          totalPages: 0,
+        };
+      } catch (error) {
+        console.error('Error searching products:', error);
+        return {
+          data: [],
+          total: 0,
+          currentPage: filter.page,
+          totalPages: 0,
+        };
+      }
+    }
   } 
 export default ProductsService;

@@ -89,15 +89,16 @@ export class AuthService {
       
       if (token) {
         // Call logout API if available
-        await apiClient.post('/auth/logout', {}, {
-          'Authorization': `Bearer ${token}`
-        }).catch(() => {
-          // Ignore errors on logout API call
+        // Token sẽ được tự động thêm vào header bởi apiClient
+        await apiClient.post('/auth/logout', {}).catch(() => {
+          // Ignore errors on logout API call (401, 404, etc.)
+          // Logout vẫn thành công dù API call fail
         });
       }
     } catch (error) {
+      // Ignore all errors during logout
     } finally {
-      // Always clear local storage
+      // Always clear local storage regardless of API call result
       localStorage.removeItem('auth_token');
       localStorage.removeItem('user');
     }

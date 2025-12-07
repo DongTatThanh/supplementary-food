@@ -209,14 +209,14 @@ const CartPage: React.FC = () => {
                                                 const { price, originalPrice } = getItemPrice(item);
                                                 return (
                                                     <>
-                                                        <p className="text-red-600 font-bold">
+                                        <p className="text-red-600 font-bold">
                                                             {price.toLocaleString('vi-VN')}₫
                                                         </p>
                                                         {originalPrice && originalPrice > price && (
                                                             <>
                                                                 <p className="text-gray-500 line-through text-sm">
                                                                     {originalPrice.toLocaleString('vi-VN')}₫
-                                                                </p>
+                                        </p>
                                                                 <span className="bg-red-100 text-red-600 px-2 py-0.5 rounded text-xs font-bold">
                                                                     FLASH SALE
                                                                 </span>

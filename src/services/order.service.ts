@@ -26,16 +26,44 @@ export class OrderService {
     // Tạo đơn hàng mới
     async createOrder(orderData: CreateOrderDto): Promise<{ success: boolean; message: string; data?: Order }> {
         try {
+            const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
+            if (!token) {
+                return {
+                    success: false,
+                    message: 'Bạn cần đăng nhập để tạo đơn hàng'
+                };
+            }
+
             const response = await apiClient.post<Order>('/api/orders', orderData);
+            
+            // Xử lý response có thể là object với data property
+            let orderResult: Order | undefined;
+            if (response && typeof response === 'object') {
+                if ('data' in response) {
+                    orderResult = (response as any).data;
+                } else {
+                    orderResult = response as Order;
+                }
+            }
+            
             return {
                 success: true,
                 message: 'Đã tạo đơn hàng thành công',
-                data: response
+                data: orderResult
             };
         } catch (error: any) {
+            let errorMessage = 'Không thể tạo đơn hàng';
+            if (error.message?.includes('401') || error.message?.includes('Unauthorized')) {
+                errorMessage = 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.';
+            } else if (error.message?.includes('404') || error.message?.includes('Not Found')) {
+                errorMessage = 'Endpoint tạo đơn hàng không tồn tại. Vui lòng liên hệ hỗ trợ.';
+            } else if (error.message) {
+                errorMessage = error.message;
+            }
+            
             return {
                 success: false,
-                message: error.response?.data?.message || 'Không thể tạo đơn hàng'
+                message: errorMessage
             };
         }
     }
@@ -43,10 +71,63 @@ export class OrderService {
     // Lấy danh sách đơn hàng
     async getUserOrders(status?: OrderStatus): Promise<Order[]> {
         try {
+            // Kiểm tra token trước khi gọi API
+            const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
+            if (!token) {
+                return [];
+            }
+
             const endpoint = status ? `/api/orders?status=${status}` : '/api/orders';
             const response = await apiClient.get<Order[]>(endpoint);
-            return response || [];
-        } catch (error) {
+            
+            // Xử lý response có thể là object với data property hoặc array trực tiếp
+            if (Array.isArray(response)) {
+                return response;
+            }   
+            if (response && typeof response === 'object' && 'data' in response) {
+                return Array.isArray((response as any).data) ? (response as any).data : [];
+            }
+            
+            return [];
+        } catch (error: any) {
+            // Xử lý các loại lỗi khác nhau
+            if (error.message?.includes('401') || error.message?.includes('Unauthorized')) {
+                // Token đã được clear bởi api-client khi 401
+                return [];
+            }
+            
+            if (error.message?.includes('404') || error.message?.includes('Not Found')) {
+                // Thử dùng endpoint recent orders như fallback
+                try {
+                    return await this.getRecentOrders(10);
+                } catch (fallbackError) {
+                    // Ignore fallback error
+                }
+            }
+            
+            return [];
+        }
+    }
+
+    // Lấy đơn hàng gần đây (fallback method)
+    async getRecentOrders(limit: number = 10): Promise<Order[]> {
+        try {
+            const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
+            if (!token) {
+                return [];
+            }
+
+            const response = await apiClient.get<Order[]>(`/api/orders/recent?limit=${limit}`);
+            
+            if (Array.isArray(response)) {
+                return response;
+            }
+            if (response && typeof response === 'object' && 'data' in response) {
+                return Array.isArray((response as any).data) ? (response as any).data : [];
+            }
+            
+            return [];
+        } catch (error: any) {
             return [];
         }
     }
@@ -54,9 +135,23 @@ export class OrderService {
     // Lấy chi tiết đơn hàng theo ID
     async getOrderById(orderId: number): Promise<Order | null> {
         try {
+            const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
+            if (!token) {
+                return null;
+            }
+
             const response = await apiClient.get<Order>(`/api/orders/${orderId}`);
-            return response;
-        } catch (error) {
+            
+            // Xử lý response có thể là object với data property
+            if (response && typeof response === 'object') {
+                if ('data' in response) {
+                    return (response as any).data;
+                }
+                return response as Order;
+            }
+            
+            return null;
+        } catch (error: any) {
             return null;
         }
     }
@@ -64,9 +159,23 @@ export class OrderService {
     // Lấy đơn hàng theo order_number
     async getOrderByNumber(orderNumber: string): Promise<Order | null> {
         try {
+            const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
+            if (!token) {
+                return null;
+            }
+
             const response = await apiClient.get<Order>(`/api/orders/number/${orderNumber}`);
-            return response;
-        } catch (error) {
+            
+            // Xử lý response có thể là object với data property
+            if (response && typeof response === 'object') {
+                if ('data' in response) {
+                    return (response as any).data;
+                }
+                return response as Order;
+            }
+            
+            return null;
+        } catch (error: any) {
             return null;
         }
     }
